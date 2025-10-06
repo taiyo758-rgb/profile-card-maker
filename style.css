@@ -98,30 +98,16 @@ button:hover {
 .sign { top: 620px; left: 80px; font-size: 20px; }
 .comment { top: 660px; left: 80px; width: 400px; font-size: 22px; line-height: 1.4; }
 
-/* --- 追加の装飾要素のスタイル --- */
-.astronomy-logo-box {
+/* 固定ロゴ画像のスタイル */
+.fixed-logo-image {
     position: absolute;
     top: 50px;
     left: 50px;
     width: 180px;
     height: 180px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    color: white;
-    font-size: 24px;
-    font-weight: bold;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+    border-radius: 50%; /* 円形にする場合。四角形がいい場合はこの行を削除 */
 }
-.astronomy-logo-box small {
-    font-size: 14px;
-    font-weight: normal;
-    margin-top: -5px;
-}
+
 .profile-title {
     position: absolute;
     top: 80px;
