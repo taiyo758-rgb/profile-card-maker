@@ -117,20 +117,6 @@ button:hover {
     color: #028ea3;
     text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
     font-family: "Chewy", sans-serif; 
-
-    background-image: linear-gradient(
-        45deg,      /* グラデーションの角度 */
-        #ff8a00,    /* 1色目 (オレンジ) */
-        #e52e71,    /* 2色目 (ピンク) */
-        #64B5F6     /* 3色目 (青) */
-    );
-    background-clip: text;
-    -webkit-background-clip: text; /* Safariなどのブラウザ対応 */
-    color: transparent; /* 元の文字色を透明にする */
-    /* ▲ グラデーション設定 ▲ */
-
-    /* text-shadowはグラデーションと併用しないほうが見やすいことが多い */
-    /* text-shadow: 2px 2px 5px rgba(0,0,0,0.8); */
 }
 }
 .profile-number {
