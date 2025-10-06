@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageUpload2 = document.getElementById('imageUpload2');
     const photo1 = document.getElementById('photo1');
     const photo2 = document.getElementById('photo2');
+    const downloadBtn = document.getElementById('downloadBtn');
+    
+    // テキスト入出力要素を取得
     const nameInput = document.getElementById('nameInput');
     const nameOutput = document.getElementById('nameOutput');
     const birthInput = document.getElementById('birthInput');
@@ -15,15 +18,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const jobOutput = document.getElementById('jobOutput');
     const commentInput = document.getElementById('commentInput');
     const commentOutput = document.getElementById('commentOutput');
-    const downloadBtn = document.getElementById('downloadBtn');
     
+    // 新しいテキスト入出力要素を取得
+    const mbtiInput = document.getElementById('mbtiInput');
+    const mbtiOutput = document.getElementById('mbtiOutput');
+    const clubInput = document.getElementById('clubInput');
+    const clubOutput = document.getElementById('clubOutput');
+    const hobbyInput = document.getElementById('hobbyInput');
+    const hobbyOutput = document.getElementById('hobbyOutput');
+    const signInput = document.getElementById('signInput');
+    const signOutput = document.getElementById('signOutput');
+
     // 画像切り取りモーダル関連
     const modal = document.getElementById('cropModal');
     const imageToCrop = document.getElementById('imageToCrop');
     const cropBtn = document.getElementById('cropBtn');
 
     let cropper;
-    let currentPhotoElement; // 現在切り取り中の写真要素 (photo1 or photo2)
+    let currentPhotoElement;
 
     // --- 機能の実装 ---
 
@@ -40,6 +52,13 @@ document.addEventListener('DOMContentLoaded', () => {
     stationInput.addEventListener('input', () => stationOutput.textContent = "最寄駅: " + (stationInput.value || '未入力'));
     jobInput.addEventListener('input', () => jobOutput.textContent = "バイト先: " + (jobInput.value || '未入力'));
     commentInput.addEventListener('input', () => commentOutput.textContent = commentInput.value || '一言コメント');
+    
+    // 新しい項目のリアルタイム反映
+    mbtiInput.addEventListener('input', () => mbtiOutput.textContent = "MBTI: " + (mbtiInput.value || '未入力'));
+    clubInput.addEventListener('input', () => clubOutput.textContent = "高校時代の部活: " + (clubInput.value || '未入力'));
+    hobbyInput.addEventListener('input', () => hobbyOutput.textContent = "したいレク: " + (hobbyInput.value || '未入力'));
+    signInput.addEventListener('input', () => signOutput.textContent = "星座: " + (signInput.value || '未入力'));
+
 
     // 3. 写真アップロードと切り取り処理
     function setupImageUpload(uploadElement, photoElement) {
@@ -50,15 +69,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const reader = new FileReader();
             reader.onload = (event) => {
                 imageToCrop.src = event.target.result;
-                currentPhotoElement = photoElement; // 対象のimg要素を保存
-                modal.style.display = 'flex'; // モーダルを表示
+                currentPhotoElement = photoElement;
+                modal.style.display = 'flex';
 
                 if (cropper) {
                     cropper.destroy();
                 }
-                // Cropper.jsを初期化
                 cropper = new Cropper(imageToCrop, {
-                    aspectRatio: photoElement.id === 'photo1' ? 200 / 250 : 1, // photo1は縦長、photo2は1:1
+                    aspectRatio: 1, // 正方形で切り取る
                     viewMode: 1,
                     autoCropArea: 1,
                 });
@@ -70,20 +88,18 @@ document.addEventListener('DOMContentLoaded', () => {
     setupImageUpload(imageUpload1, photo1);
     setupImageUpload(imageUpload2, photo2);
 
-    // 「切り取る」ボタンが押されたときの処理
     cropBtn.addEventListener('click', () => {
         if (cropper) {
             const canvas = cropper.getCroppedCanvas();
-            currentPhotoElement.src = canvas.toDataURL(); // 切り取った画像をカードに設定
-            modal.style.display = 'none'; // モーダルを非表示
+            currentPhotoElement.src = canvas.toDataURL();
+            modal.style.display = 'none';
             cropper.destroy();
         }
     });
 
     // 4. ダウンロード機能
     downloadBtn.addEventListener('click', () => {
-        // html2canvasを使ってカード要素を画像に変換
-        html2canvas(card).then(canvas => {
+        html2canvas(card, { scale: 2 }).then(canvas => { // 高解像度でダウンロード
             const link = document.createElement('a');
             link.href = canvas.toDataURL('image/png');
             link.download = 'profile-card.png';
