@@ -113,10 +113,12 @@ button:hover {
     top: 40px;
     left: 390px;
     font-size: 120px;
-    font-weight: bold;
-    color: #028ea3;
-    text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
-    font-family: "Chewy", sans-serif; 
+    font-weight: 500;
+    font-family: "Cinzel", serif; 
+    color: #a8d8e9; /* 文字の基本色 (画像に近い薄い水色) */
+    text-shadow: 
+        1px 1px 1px rgba(0, 0, 0, 0.4),      /* 右下の濃い影 */
+        -1px -1px 1px rgba(255, 255, 255, 0.6); /* 左上の明るい光 (ハイライト) */
 }
 
 .profile-number {
@@ -124,10 +126,12 @@ button:hover {
     top: 140px;
     left: 470px;
     font-size: 120px;
-    font-weight: bold;
-    color: black;
-    text-shadow: 3px 3px 8px rgba(0,0,0,0.8);
-    font-family: "Chewy", sans-serif; 
+    font-weight: 500;
+    font-family: "Cinzel", sans-serif;
+    color: #a8d8e9; /* 文字の基本色 (画像に近い薄い水色) */
+    text-shadow: 
+        1px 1px 1px rgba(0, 0, 0, 0.4),      /* 右下の濃い影 */
+        -1px -1px 1px rgba(255, 255, 255, 0.6); /* 左上の明るい光 (ハイライト) */
 }
 
 /* 画像切り取りモーダルのスタイル */
