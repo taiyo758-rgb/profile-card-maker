@@ -111,8 +111,8 @@ button:hover {
 .profile-title {
     position: absolute;
     top: 80px;
-    left: 280px;
-    font-size: 60px;
+    left: 450px;
+    font-size: 120px;
     font-weight: bold;
     color: #4CAF50;
     text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
