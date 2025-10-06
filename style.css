@@ -103,8 +103,8 @@ button:hover {
     position: absolute;
     top: 50px;
     left: 50px;
-    width: 180px;
-    height: 180px;
+    width: 230px;
+    height: 230px;
     border-radius: 50%; /* 円形にする場合。四角形がいい場合はこの行を削除 */
 }
 
