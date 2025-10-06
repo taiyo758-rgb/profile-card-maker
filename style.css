@@ -121,7 +121,7 @@ button:hover {
 }
 .profile-number {
     position: absolute;
-    top: 180px;
+    top: 150px;
     left: 470px;
     font-size: 120px;
     font-weight: bold;
