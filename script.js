@@ -122,7 +122,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ダウンロード機能
     downloadBtn.addEventListener('click', () => {
-        html2canvas(card, { scale: 2 }).then(canvas => {
+        html2canvas(card, { 
+            scale: 2,
+            useCORS: true 
+        }).then(canvas => {
             const link = document.createElement('a');
             link.href = canvas.toDataURL('image/png');
             link.download = 'profile-card.png';
