@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自己紹介カード作成サイト</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
+</head>
+<body>
+    <h1>自己紹介カードメーカー</h1>
+
+    <div class="container">
+        <div class="settings">
+            <h2>カードの設定</h2>
+
+            <fieldset>
+                <legend>1. 背景を選ぶ</legend>
+                <label><input type="radio" name="bg" value="images/bg1.jpg" checked> 背景1</label>
+                <label><input type="radio" name="bg" value="images/bg2.jpg"> 背景2</label>
+                <label><input type="radio" name="bg" value="images/bg3.jpg"> 背景3</label>
+            </fieldset>
+
+            <fieldset>
+                <legend>2. 写真をアップロード</legend>
+                <p>写真1 (メイン): <input type="file" id="imageUpload1" accept="image/*"></p>
+                <p>写真2 (サブ): <input type="file" id="imageUpload2" accept="image/*"></p>
+            </fieldset>
+
+            <fieldset>
+                <legend>3. 内容を入力</legend>
+                <p>名前: <input type="text" id="nameInput" placeholder="山田 太郎"></p>
+                <p>生年月日: <input type="text" id="birthInput" placeholder="2000年4月1日"></p>
+                <p>最寄駅: <input type="text" id="stationInput" placeholder="〇〇駅"></p>
+                <p>バイト先: <input type="text" id="jobInput" placeholder="カフェ〇〇"></p>
+                <p>一言コメント: <textarea id="commentInput" rows="3" placeholder="よろしくお願いします！"></textarea></p>
+            </fieldset>
+
+            <button id="downloadBtn">カードを画像としてダウンロード</button>
+        </div>
+
+        <div class="preview">
+            <h2>プレビュー</h2>
+            <div id="card">
+                <div class="photo-area photo1">
+                    <img id="photo1" src="https://via.placeholder.com/200x250.png?text=Photo1" alt="写真1">
+                </div>
+                <div class="photo-area photo2">
+                    <img id="photo2" src="https://via.placeholder.com/150.png?text=Photo2" alt="写真2">
+                </div>
+                <div class="text-area name" id="nameOutput">名前</div>
+                <div class="text-area birth" id="birthOutput">生年月日</div>
+                <div class="text-area station" id="stationOutput">最寄駅</div>
+                <div class="text-area job" id="jobOutput">バイト先</div>
+                <div class="text-area comment" id="commentOutput">一言コメント</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cropModal" class="modal">
+        <div class="modal-content">
+            <h2>画像を切り取る</h2>
+            <div>
+                <img id="imageToCrop" src="" alt="切り取り対象">
+            </div>
+            <button id="cropBtn">この範囲で切り取る</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
