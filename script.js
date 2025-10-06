@@ -12,19 +12,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const nameOutput = document.getElementById('nameOutput');
     const birthInput = document.getElementById('birthInput');
     const birthOutput = document.getElementById('birthOutput');
+    const gradeInput = document.getElementById('gradeInput');
+    const gradeOutput = document.getElementById('gradeOutput');
     const stationInput = document.getElementById('stationInput');
     const stationOutput = document.getElementById('stationOutput');
     const jobInput = document.getElementById('jobInput');
     const jobOutput = document.getElementById('jobOutput');
     const commentInput = document.getElementById('commentInput');
     const commentOutput = document.getElementById('commentOutput');
-    
     const mbtiInput = document.getElementById('mbtiInput');
     const mbtiOutput = document.getElementById('mbtiOutput');
     const clubInput = document.getElementById('clubInput');
     const clubOutput = document.getElementById('clubOutput');
-    const hobbyInput = document.getElementById('hobbyInput');
-    const hobbyOutput = document.getElementById('hobbyOutput');
     const signInput = document.getElementById('signInput');
     const signOutput = document.getElementById('signOutput');
 
@@ -74,12 +73,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // テキスト入力のリアルタイム反映
     nameInput.addEventListener('input', () => nameOutput.textContent = "名前: " + (nameInput.value || ''));
     birthInput.addEventListener('input', () => birthOutput.textContent = "生年月日: " + (birthInput.value || '未入力'));
+    gradeInput.addEventListener('input', () => gradeOutput.textContent = "学部学年: " + (gradeInput.value || '未入力'));
     stationInput.addEventListener('input', () => stationOutput.textContent = "最寄駅: " + (stationInput.value || '未入力'));
     jobInput.addEventListener('input', () => jobOutput.textContent = "バイト先: " + (jobInput.value || '未入力'));
     commentInput.addEventListener('input', () => commentOutput.textContent = "一言コメント: " + (commentInput.value || ''));
     mbtiInput.addEventListener('input', () => mbtiOutput.textContent = "MBTI: " + (mbtiInput.value || '未入力'));
     clubInput.addEventListener('input', () => clubOutput.textContent = "高校時代の部活: " + (clubInput.value || '未入力'));
-    hobbyInput.addEventListener('input', () => hobbyOutput.textContent = "したいレク: " + (hobbyInput.value || '未入力'));
     signInput.addEventListener('input', () => signOutput.textContent = "星座: " + (signInput.value || '未入力'));
 
 
