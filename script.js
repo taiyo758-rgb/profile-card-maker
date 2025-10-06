@@ -72,11 +72,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // テキスト入力のリアルタイム反映
-    nameInput.addEventListener('input', () => nameOutput.textContent = nameInput.value || '名前');
+    nameInput.addEventListener('input', () => nameOutput.textContent = "名前: " + (nameInput.value || ''));
     birthInput.addEventListener('input', () => birthOutput.textContent = "生年月日: " + (birthInput.value || '未入力'));
     stationInput.addEventListener('input', () => stationOutput.textContent = "最寄駅: " + (stationInput.value || '未入力'));
     jobInput.addEventListener('input', () => jobOutput.textContent = "バイト先: " + (jobInput.value || '未入力'));
-    commentInput.addEventListener('input', () => commentOutput.textContent = commentInput.value || '一言コメント');
+    commentInput.addEventListener('input', () => commentOutput.textContent = "一言コメント: " + (commentInput.value || ''));
     mbtiInput.addEventListener('input', () => mbtiOutput.textContent = "MBTI: " + (mbtiInput.value || '未入力'));
     clubInput.addEventListener('input', () => clubOutput.textContent = "高校時代の部活: " + (clubInput.value || '未入力'));
     hobbyInput.addEventListener('input', () => hobbyOutput.textContent = "したいレク: " + (hobbyInput.value || '未入力'));
