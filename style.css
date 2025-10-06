@@ -118,17 +118,16 @@ button:hover {
     text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
     font-family: "Chewy", sans-serif; 
 }
-}
+
 .profile-number {
     position: absolute;
-    top: 150px;
+    top: 180px;
     left: 470px;
     font-size: 120px;
     font-weight: bold;
     color: black;
     text-shadow: 3px 3px 8px rgba(0,0,0,0.8);
     font-family: "Chewy", sans-serif; 
-}
 }
 
 /* 画像切り取りモーダルのスタイル */
