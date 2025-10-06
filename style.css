@@ -88,15 +88,15 @@ button:hover {
     text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
 }
 
-.name { top: 360px; left: 80px; font-size: 35px; }
-.birth { top: 410px; left: 80px; font-size: 35px; }
-.station { top: 460px; left: 80px; font-size: 35px; }
-.job { top: 510px; left: 80px; font-size: 35px; }
-.mbti { top: 570px; left: 80px; font-size: 35px; }
-.club { top: 620px; left: 80px; font-size: 35px; }
-.hobby { top: 670px; left: 80px; font-size: 35px; }
-.sign { top: 720px; left: 80px; font-size: 35px; }
-.comment { top: 790px; left: 80px; width: 400px; font-size: 35px; line-height: 1.4; }
+.name { top: 330px; left: 80px; font-size: 35px; }
+.birth { top: 380px; left: 80px; font-size: 35px; }
+.station { top: 430px; left: 80px; font-size: 35px; }
+.job { top: 480px; left: 80px; font-size: 35px; }
+.mbti { top: 530px; left: 80px; font-size: 35px; }
+.club { top: 580px; left: 80px; font-size: 35px; }
+.hobby { top: 630px; left: 80px; font-size: 35px; }
+.sign { top: 680px; left: 80px; font-size: 35px; }
+.comment { top: 730px; left: 80px; width: 400px; font-size: 35px; line-height: 1.4; }
 
 /* 固定ロゴ画像のスタイル */
 .fixed-logo-image {
@@ -110,8 +110,8 @@ button:hover {
 
 .profile-title {
     position: absolute;
-    top: 80px;
-    left: 400px;
+    top: 50px;
+    left: 390px;
     font-size: 120px;
     font-weight: bold;
     color: #028ea3;
@@ -121,7 +121,7 @@ button:hover {
 
 .profile-number {
     position: absolute;
-    top: 180px;
+    top: 150px;
     left: 470px;
     font-size: 120px;
     font-weight: bold;
