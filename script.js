@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
     commentInput.addEventListener('input', () => commentOutput.textContent = "一言コメント: " + (commentInput.value || ''));
     mbtiInput.addEventListener('input', () => mbtiOutput.textContent = "MBTI: " + (mbtiInput.value || '未入力'));
     clubInput.addEventListener('input', () => clubOutput.textContent = "高校時代の部活: " + (clubInput.value || '未入力'));
-    signInput.addEventListener('input', () => signOutput.textContent = "星座: " + (signInput.value || '未入力'));
+    
 
 
     // 写真アップロードと切り取り処理
