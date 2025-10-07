@@ -35,7 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const signSelect = document.getElementById('signSelect');
     const signImage = document.getElementById('signImage');
-    
 
     // 1. ドロップダウンに45から100までの選択肢を作成
     for (let i = 45; i <= 100; i++) {
@@ -58,15 +57,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 星座が選択されたら画像を表示する処理を追加
     signSelect.addEventListener('change', () => {
-        const selectedSign = signSelect.value;
-        if (selectedSign) {
-                // 画像のパスを生成して表示
-            signImage.src = `images/${selectedSign}.png`;
+        // 選択されたオプションの要素を取得
+        const selectedOption = signSelect.options[signSelect.selectedIndex];
+        const selectedValue = selectedOption.value; // "aries"など
+        const selectedText = selectedOption.text;   // "牡羊座"など
+
+        if (selectedValue) {
+            // 画像の処理
+            signImage.src = `images/${selectedValue}.png`;
             signImage.style.display = 'block';
+            // 文字の処理
+             signOutput.textContent = "星座: " + selectedText;
         } else {
-            // 何も選択されていない場合は画像を隠す
+            // 画像を隠す
             signImage.style.display = 'none';
-         }
+            // 文字をリセット
+            signOutput.textContent = "星座: 未選択";
+        }
     });
 
 
