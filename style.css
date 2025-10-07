@@ -20,10 +20,7 @@ fieldset {
     border: 1px solid #ccc;
     border-radius: 5px;
 }
-input[type="text"], textarea {
-    width: 90%;
-    padding: 5px;
-}
+input[type="text"], textarea, select { width: 90%; padding: 5px; }
 button {
     padding: 10px 20px;
     background-color: #007bff;
@@ -78,6 +75,16 @@ button:hover {
     right: 50px;
     width: 300px;
     height: 300px;
+}
+
+.sign-image-area {
+    position: absolute;
+    top: 410px;
+    right: 300px;
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    display: none; /* 初期状態では非表示 */
 }
 
 .text-area {
