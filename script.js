@@ -33,6 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const numberInput = document.getElementById('numberInput');
     const numberOutput = document.getElementById('numberOutput');
 
+    const signSelect = document.getElementById('signSelect');
+    const signImage = document.getElementById('signImage');
+    
+
     // 1. ドロップダウンに45から100までの選択肢を作成
     for (let i = 45; i <= 100; i++) {
         const option = document.createElement('option');
@@ -51,6 +55,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ▲ ここまでが新しいコード ▲
+
+    // 星座が選択されたら画像を表示する処理を追加
+    signSelect.addEventListener('change', () => {
+        const selectedSign = signSelect.value;
+        if (selectedSign) {
+                // 画像のパスを生成して表示
+            signImage.src = `images/${selectedSign}.png`;
+            signImage.style.display = 'block';
+        } else {
+            // 何も選択されていない場合は画像を隠す
+            signImage.style.display = 'none';
+         }
+    });
 
 
     // 画像切り取りモーダル関連
