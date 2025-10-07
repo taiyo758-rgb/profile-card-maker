@@ -103,7 +103,7 @@ button:hover {
 .mbti { top: 550px; left: 80px; font-size: 35px; }
 .club { top: 600px; left: 80px; font-size: 35px; }
 .sign { top: 650px; left: 80px; font-size: 35px; }
-.comment { top: 700px; left: 80px; width: 400px; font-size: 35px; line-height: 1.4; }
+.comment { top: 700px; left: 80px; width: 700px; font-size: 35px; line-height: 1.4; }
 
 /* 固定ロゴ画像のスタイル */
 .fixed-logo-image {
