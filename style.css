@@ -254,14 +254,27 @@ fieldset {
 #photoContainer1 { top: 60px; right: 50px; width: 300px; height: 300px; }
 #photoContainer2 { top: 410px; right: 50px; width: 300px; height: 300px; }
 
+.stamp-target-selector label { margin-right: 15px; }
+
 .stamp {
     position: absolute;
-    top: 0;
-    left: 0;
-    font-size: 50px;
+    top: 50%; /* 中央に配置 */
+    left: 50%;
+    font-size: 80px;
     cursor: grab;
     user-select: none;
-    touch-action: none; /* スマホでの操作性を改善 */
+    touch-action: none;
+    width: 80px; /* 大きさを固定 */
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box; /* 枠線を含めて大きさを計算 */
+}
+
+/* 選択されたスタンプに青い破線の枠を表示 */
+.stamp:focus {
+    outline: 2px dashed #007bff;
 }
 .stamp.mosaic {
     width: 50px;
