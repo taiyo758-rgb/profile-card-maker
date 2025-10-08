@@ -49,8 +49,9 @@ button:hover {
     margin-right: -1px;
 }
 .tab-btn.active {
-    background-color: white;
-    border-bottom: 1px solid white;
+    background-color: #0056b3; /* 背景色を濃い青に変更 */
+    border-bottom: 1px solid #0056b3; /* 下線を同じ色に */
+    color: white; /* 文字色を白に指定 */
 }
 .tab-content {
     display: none; /* 初期状態では非表示 */
