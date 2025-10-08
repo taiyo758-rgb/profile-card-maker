@@ -156,3 +156,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+
+// --- タブ機能の処理 ---
+const tabButtons = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
+
+tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        // クリックされたボタンのdata-tab属性を取得
+        const tabId = button.getAttribute('data-tab');
+
+        // すべてのボタンとコンテンツからactiveクラスを削除
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        tabContents.forEach(content => content.classList.remove('active'));
+
+        // クリックされたボタンに対応するコンテンツにactiveクラスを追加
+        button.classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+    });
+});
