@@ -99,18 +99,15 @@ fieldset {
 
 /* --- 各写真とテキストの位置・サイズ調整 --- */
 
+
 .photo1 {
-    top: 60px;
-    right: 50px;
-    width: 300px;
-    height: 300px;
+    width: 100%;
+    height: 100%;
 }
 
 .photo2 {
-    top: 410px;
-    right: 50px;
-    width: 300px;
-    height: 300px;
+    width: 100%;
+    height: 100%;
 }
 
 .sign-image-area {
