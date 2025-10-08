@@ -197,22 +197,30 @@ function makeInteractable(element) {
             }
         })
         .resizable({
-            edges: { top: true, left: true, bottom: true, right: true },
-            listeners: {
-                move: function (event) {
-                    let { x, y } = event.target.dataset;
-                    x = parseFloat(x) || 0;
-                    y = parseFloat(y) || 0;
-                    
-                    Object.assign(event.target.style, {
-                        width: `${event.rect.width}px`,
-                        height: `${event.rect.height}px`,
-                    });
-                    
-                    Object.assign(event.target.dataset, { x, y });
-                }
+    edges: { top: true, left: true, bottom: true, right: true },
+    listeners: {
+        move: function (event) {
+            const target = event.target;
+
+            // 幅と高さを更新
+            target.style.width = `${event.rect.width}px`;
+            target.style.height = `${event.rect.height}px`;
+
+            // ▼ ここからが重要 ▼
+            // もしモザイクでなければ（＝絵文字なら）、font-sizeも更新する
+            if (!target.classList.contains('mosaic')) {
+                // 高さに合わせて文字サイズを調整（0.9を掛けて少し余白を作る）
+                target.style.fontSize = `${event.rect.height * 0.9}px`;
             }
-        });
+        }
+    },
+    modifiers: [
+        // 小さくなりすぎないように最小サイズを指定
+        interact.modifiers.restrictSize({
+            min: { width: 20, height: 20 }
+        })
+    ]
+})
     
     // ダブルクリックで削除
     element.addEventListener('dblclick', (e) => {
