@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>自己紹介カード作成サイト</title>
+    <title>WASA天文自己紹介カードメーカー</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -71,7 +71,21 @@
                         </p>
                         <p>一言コメント: <textarea id="commentInput" rows="3" placeholder="よろしくお願いします！"></textarea></p>
                     </fieldset>
-                </div>
+                        <legend>4. スタンプを追加</legend>
+                        <p>スタンプを追加する写真を選択:</p>
+                        <div class="stamp-target-selector">
+                            <label><input type="radio" name="stampTarget" value="photoContainer1" checked> 写真1</label>
+                            <label><input type="radio" name="stampTarget" value="photoContainer2"> 写真2</label>
+                        </div>
+                        <p>クリックして写真に追加:</p>
+                        <div class="stamp-selector">
+                            <div class="stamp-option">😊</div>
+                            <div class="stamp-option">⭐️</div>
+                            <div class="stamp-option">❤️</div>
+                            <div class="stamp-option mosaic">■</div>
+                        </div>
+                    </fieldset>
+            </div>
             </div>
             <button id="downloadBtn">カードを画像としてダウンロード</button>
         </div>
@@ -82,11 +96,16 @@
                 <img id="photo1" class="photo-area photo1" src="https://via.placeholder.com/300.png?text=Photo1" alt="写真1">
                 <img id="photo2" class="photo-area photo2" src="https://via.placeholder.com/300.png?text=Photo2" alt="写真2">
                 <img src="" id="signImage" class="sign-image-area" alt="星座の画像">
-
+                
                 <img src="images/my-logo.png" class="fixed-logo-image" alt="固定ロゴ">
                 <div class="profile-title">PROFILE</div>
                 <div class="profile-number" id="numberOutput">46</div>
-
+                <div class="photo-container" id="photoContainer1">
+                    <img id="photo1" class="photo-area photo1" src="..." alt="写真1">
+                    </div>
+                <div class="photo-container" id="photoContainer2">
+                    <img id="photo2" class="photo-area photo2" src="..." alt="写真2">
+                    </div>
                 <div class="text-area name" id="nameOutput">名前</div>
                 <div class="text-area birth" id="birthOutput">生年月日</div>
                 <div class="text-area grade" id="gradeOutput">学部学年</div>
@@ -112,6 +131,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
