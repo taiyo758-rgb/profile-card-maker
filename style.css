@@ -227,3 +227,45 @@ fieldset {
         margin-bottom: calc(-500px * (1 - (100vw / 1250px))); /* 縮小によって生まれた下の余白を詰める */
     }
 }
+
+/* --- スタンプ機能のスタイル --- */
+.stamp-selector {
+    display: flex;
+    gap: 10px;
+    cursor: pointer;
+}
+.stamp-option {
+    font-size: 40px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    user-select: none; /* テキスト選択を防ぐ */
+}
+.stamp-option.mosaic {
+    background: #888;
+    color: #888;
+    font-size: 20px;
+    filter: blur(5px);
+}
+.photo-container {
+    position: absolute; /* .photo1や.photo2と同じ位置・サイズに合わせる */
+}
+/* JavaScriptで写真コンテナの位置を合わせるため、CSSでの位置指定は削除しても良い */
+#photoContainer1 { top: 60px; right: 50px; width: 300px; height: 300px; }
+#photoContainer2 { top: 410px; right: 50px; width: 300px; height: 300px; }
+
+.stamp {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 50px;
+    cursor: grab;
+    user-select: none;
+    touch-action: none; /* スマホでの操作性を改善 */
+}
+.stamp.mosaic {
+    width: 50px;
+    height: 50px;
+    background: #888;
+    filter: blur(8px);
+}
