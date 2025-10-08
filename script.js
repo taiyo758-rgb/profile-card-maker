@@ -176,3 +176,51 @@ tabButtons.forEach(button => {
         document.getElementById(tabId).classList.add('active');
     });
 });
+
+// --- スタンプ機能の処理 ---
+
+// interact.jsでスタンプをドラッグ可能にする関数
+function makeDraggable(element) {
+    interact(element)
+        .draggable({
+            listeners: {
+                move(event) {
+                    const target = event.target;
+                    const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+                    const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+                    target.style.transform = `translate(${x}px, ${y}px)`;
+
+                    target.setAttribute('data-x', x);
+                    target.setAttribute('data-y', y);
+                }
+            }
+        });
+}
+
+// スタンプの選択肢と写真コンテナを取得
+const stampOptions = document.querySelectorAll('.stamp-option');
+const photoContainers = document.querySelectorAll('.photo-container');
+
+// 各スタンプの選択肢にクリックイベントを設定
+stampOptions.forEach(option => {
+    option.addEventListener('click', () => {
+        // 新しいスタンプ要素を作成
+        const newStamp = document.createElement('div');
+        newStamp.classList.add('stamp');
+
+        // モザイクか絵文字かで処理を分ける
+        if (option.classList.contains('mosaic')) {
+            newStamp.classList.add('mosaic');
+        } else {
+            newStamp.textContent = option.textContent;
+        }
+        
+        // とりあえず写真1のコンテナに追加する（応用すればどちらか選べるようにできる）
+        const targetContainer = document.getElementById('photoContainer1');
+        targetContainer.appendChild(newStamp);
+
+        // 新しく追加したスタンプをドラッグ可能にする
+        makeDraggable(newStamp);
+    });
+});
