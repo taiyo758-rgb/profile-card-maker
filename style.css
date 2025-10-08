@@ -164,3 +164,30 @@ button:hover {
     max-width: 80vw;
     max-height: 70vh;
 }
+
+/* --- スマホ表示用のスタイル --- */
+@media (max-width: 768px) {
+    /* コンテナを縦並びにする */
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .settings, .preview {
+        flex-basis: 100%;
+        width: 100%;
+    }
+    
+    h1 {
+        text-align: center;
+    }
+
+    /* プレビューが画面に収まるように縮小する */
+    .preview {
+        /* 横幅いっぱいに広げた上で、transformで中身を縮小 */
+        width: 1250px; /* カード幅＋α */
+        transform-origin: top left;
+        transform: scale(calc(100vw / 1250px));
+        margin-bottom: calc(-500px * (1 - (100vw / 1250px))); /* 縮小によって生まれた下の余白を詰める */
+    }
+}
