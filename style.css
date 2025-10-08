@@ -33,6 +33,40 @@ button:hover {
     background-color: #0056b3;
 }
 
+/* --- タブ機能のスタイル --- */
+.tab-buttons {
+    display: flex;
+    margin-bottom: 10px;
+}
+.tab-btn {
+    flex: 1;
+    padding: 10px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    border-radius: 5px 5px 0 0;
+    margin-right: -1px;
+}
+.tab-btn.active {
+    background-color: white;
+    border-bottom: 1px solid white;
+}
+.tab-content {
+    display: none; /* 初期状態では非表示 */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 0 5px 5px 5px;
+    background-color: white;
+}
+.tab-content.active {
+    display: block; /* 選択されたタブのみ表示 */
+}
+/* タブ化に伴い、fieldsetのボーダーは不要に */
+fieldset {
+    border: none;
+    margin-bottom: 0;
+}
+
 /* カードのスタイル */
 #card {
     width: 1200px;
