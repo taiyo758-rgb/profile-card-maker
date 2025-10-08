@@ -145,7 +145,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ダウンロード機能
     downloadBtn.addEventListener('click', () => {
-        html2canvas(card, { 
+        // ダウンロード前に選択中のスタンプの枠線を消す
+        const selectedStamp = document.querySelector('.stamp:focus');
+        if(selectedStamp) { selectedStamp.blur(); }
+    
+        html2canvas(card, {      
             scale: 2,
             useCORS: true 
         }).then(canvas => {
@@ -177,10 +181,8 @@ tabButtons.forEach(button => {
     });
 });
 
-// --- スタンプ機能の処理 ---
-
-// interact.jsでスタンプをドラッグ可能にする関数
-function makeDraggable(element) {
+// === スタンプ機能（応用版） ===
+function makeInteractable(element) {
     interact(element)
         .draggable({
             listeners: {
@@ -188,39 +190,54 @@ function makeDraggable(element) {
                     const target = event.target;
                     const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
                     const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-
                     target.style.transform = `translate(${x}px, ${y}px)`;
-
                     target.setAttribute('data-x', x);
                     target.setAttribute('data-y', y);
                 }
             }
+        })
+        .resizable({
+            edges: { top: true, left: true, bottom: true, right: true },
+            listeners: {
+                move: function (event) {
+                    let { x, y } = event.target.dataset;
+                    x = parseFloat(x) || 0;
+                    y = parseFloat(y) || 0;
+                    
+                    Object.assign(event.target.style, {
+                        width: `${event.rect.width}px`,
+                        height: `${event.rect.height}px`,
+                    });
+                    
+                    Object.assign(event.target.dataset, { x, y });
+                }
+            }
         });
+    
+    // ダブルクリックで削除
+    element.addEventListener('dblclick', (e) => {
+        e.target.remove();
+    });
 }
 
-// スタンプの選択肢と写真コンテナを取得
 const stampOptions = document.querySelectorAll('.stamp-option');
-const photoContainers = document.querySelectorAll('.photo-container');
-
-// 各スタンプの選択肢にクリックイベントを設定
 stampOptions.forEach(option => {
     option.addEventListener('click', () => {
-        // 新しいスタンプ要素を作成
+        const targetId = document.querySelector('input[name="stampTarget"]:checked').value;
+        const targetContainer = document.getElementById(targetId);
+        if (!targetContainer) return;
+
         const newStamp = document.createElement('div');
         newStamp.classList.add('stamp');
+        newStamp.setAttribute('tabindex', 0); // 選択できるようにする
 
-        // モザイクか絵文字かで処理を分ける
         if (option.classList.contains('mosaic')) {
             newStamp.classList.add('mosaic');
         } else {
             newStamp.textContent = option.textContent;
         }
         
-        // とりあえず写真1のコンテナに追加する（応用すればどちらか選べるようにできる）
-        const targetContainer = document.getElementById('photoContainer1');
         targetContainer.appendChild(newStamp);
-
-        // 新しく追加したスタンプをドラッグ可能にする
-        makeDraggable(newStamp);
+        makeInteractable(newStamp);
     });
 });
