@@ -181,7 +181,7 @@ tabButtons.forEach(button => {
     });
 });
 
-// === スタンプ機能（応用版） ===
+// ▼▼▼ この関数を丸ごと置き換えてください ▼▼▼
 function makeInteractable(element) {
     interact(element)
         .draggable({
@@ -197,35 +197,32 @@ function makeInteractable(element) {
             }
         })
         .resizable({
-    edges: { top: true, left: true, bottom: true, right: true },
-    listeners: {
-        move: function (event) {
-            const target = event.target;
-
-            // 幅と高さを更新
-            target.style.width = `${event.rect.width}px`;
-            target.style.height = `${event.rect.height}px`;
-
-            // ▼ ここからが重要 ▼
-            // もしモザイクでなければ（＝絵文字なら）、font-sizeも更新する
-            if (!target.classList.contains('mosaic')) {
-                // 高さに合わせて文字サイズを調整（0.9を掛けて少し余白を作る）
-                target.style.fontSize = `${event.rect.height * 0.9}px`;
-            }
-        }
-    },
-    modifiers: [
-        // 小さくなりすぎないように最小サイズを指定
-        interact.modifiers.restrictSize({
-            min: { width: 20, height: 20 }
+            edges: { top: true, left: true, bottom: true, right: true },
+            listeners: {
+                move: function (event) {
+                    const target = event.target;
+                    target.style.width = `${event.rect.width}px`;
+                    target.style.height = `${event.rect.height}px`;
+                    if (!target.classList.contains('mosaic')) {
+                        target.style.fontSize = `${event.rect.height * 0.9}px`;
+                    }
+                }
+            },
+            modifiers: [
+                interact.modifiers.restrictSize({
+                    min: { width: 20, height: 20 }
+                })
+            ]
         })
-    ]
-})
-    
-    // ダブルクリックで削除
-    element.addEventListener('dblclick', (e) => {
-        e.target.remove();
-    });
+        // 【新しいコード】スマホのダブルタップで削除する処理
+        .on('doubletap', (event) => {
+            event.target.remove();
+        });
+
+    // 【削除】古いダブルクリックの処理は不要なので消します
+    // element.addEventListener('dblclick', (e) => {
+    //     e.target.remove();
+    // });
 }
 
 const stampOptions = document.querySelectorAll('.stamp-option');
