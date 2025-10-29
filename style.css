@@ -120,23 +120,41 @@ fieldset {
     display: none; /* 初期状態では非表示 */
 }
 
+/* style.css */
+
+/* --- 各写真とテキストの位置・サイズ調整 --- */
+
+/* （この上の既存のphoto1, photo2, sign-image-areaのスタイルはそのまま） */
+
 .text-area {
     position: absolute;
     background-color: transparent;
     padding: 5px 10px;
     color: white;
     text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+    /* ここに共通の文字サイズを設定することもできますが、
+       各項目で個別に設定する方が柔軟です。
+       今回は各項目で個別に設定します。
+    */
 }
 
-.name { top: 300px; left: 80px; font-size: 30px; }
-.birth { top: 350px; left: 80px; font-size: 30px; }
-.grade { top: 400px; left: 80px; font-size: 30px; }
-.station { top: 450px; left: 80px; font-size: 30px; }
-.job { top: 500px; left: 80px; font-size: 30px; }
-.mbti { top: 550px; left: 80px; font-size: 30px; }
-.club { top: 600px; left: 80px; font-size: 30px; }
-.sign { top: 650px; left: 80px; font-size: 30px; }
-.comment { top: 700px; left: 80px; width: 700px; font-size: 30px; line-height: 1.4; }
+.name { top: 280px; left: 60px; font-size: 24px; } /* 調整例 */
+.birth { top: 320px; left: 60px; font-size: 24px; } /* 調整例 */
+.grade { top: 360px; left: 60px; font-size: 24px; } /* 調整例 */
+.station { top: 400px; left: 60px; font-size: 24px; } /* 調整例 */
+.job { top: 440px; left: 60px; font-size: 24px; } /* 調整例 */
+.mbti { top: 480px; left: 60px; font-size: 24px; } /* 調整例 */
+.club { top: 520px; left: 60px; font-size: 24px; } /* 調整例 */
+.sign { top: 560px; left: 60px; font-size: 24px; } /* 調整例 */
+.comment { 
+    top: 600px; 
+    left: 60px; 
+    width: 650px; /* 必要に応じて幅も調整 */
+    font-size: 24px; 
+    line-height: 1.4; 
+} /* 調整例 */
+
+/* （この下の固定ロゴやタイトル、モーダルなどのスタイルはそのまま） */
 
 /* 固定ロゴ画像のスタイル */
 .fixed-logo-image {
