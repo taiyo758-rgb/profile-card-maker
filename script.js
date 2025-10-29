@@ -183,46 +183,55 @@ tabButtons.forEach(button => {
 
 // ▼▼▼ この関数を丸ごと置き換えてください ▼▼▼
 function makeInteractable(element) {
-    interact(element)
-        .draggable({
-            listeners: {
-                move(event) {
-                    const target = event.target;
-                    const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
-                    const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-                    target.style.transform = `translate(${x}px, ${y}px)`;
-                    target.setAttribute('data-x', x);
-                    target.setAttribute('data-y', y);
-                }
-            }
-        })
-        .resizable({
-            edges: { top: true, left: true, bottom: true, right: true },
-            listeners: {
-                move: function (event) {
-                    const target = event.target;
-                    target.style.width = `${event.rect.width}px`;
-                    target.style.height = `${event.rect.height}px`;
-                    if (!target.classList.contains('mosaic')) {
-                        target.style.fontSize = `${event.rect.height * 0.9}px`;
-                    }
-                }
-            },
-            modifiers: [
-                interact.modifiers.restrictSize({
-                    min: { width: 20, height: 20 }
-                })
-            ]
-        })
-        // 【新しいコード】スマホのダブルタップで削除する処理
-        .on('doubletap', (event) => {
-            event.target.remove();
-        });
+    interact(element)
+        .draggable({ // ドラッグ移動
+            listeners: {
+                move(event) {
+                    const target = event.target;
+                    // data属性から現在の位置とスケールを取得
+                    const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+                    const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+                    const scale = parseFloat(target.getAttribute('data-scale')) || 1;
 
-    // 【削除】古いダブルクリックの処理は不要なので消します
-    // element.addEventListener('dblclick', (e) => {
-    //     e.target.remove();
-    // });
+                    // 位置とスケールを同時にtransformに設定
+                    target.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+
+                    // data属性を更新
+                    target.setAttribute('data-x', x);
+                    target.setAttribute('data-y', y);
+                }
+            }
+        })
+        .gesturable({ // 【変更】ピンチ操作 (拡大縮小)
+            onstart(event) {
+                // ジェスチャー開始時のスケールをdata属性に記録
+                const target = event.target;
+                target.setAttribute('data-start-scale', parseFloat(target.getAttribute('data-scale')) || 1);
+            },
+            onmove(event) {
+                const target = event.target;
+                const startScale = parseFloat(target.getAttribute('data-start-scale')) || 1;
+                
+                // 新しいスケールを計算 (開始時スケール * ジェスチャー倍率)
+                let scale = startScale * event.scale;
+
+                // スケールの最小・最大値を設定 (例: 0.3倍～5倍)
+                scale = Math.max(0.3, Math.min(scale, 5.0));
+
+                // data属性から現在の位置を取得
+                const x = (parseFloat(target.getAttribute('data-x')) || 0);
+                const y = (parseFloat(target.getAttribute('data-y')) || 0);
+
+                // transformで位置とスケールを同時に設定
+                target.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+                
+                // 変更後のスケールをdata属性に保存
+                target.setAttribute('data-scale', scale);
+            }
+        })
+        .on('doubletap', (event) => { // 【変更なし】スマホのダブルタップで削除
+            event.target.remove();
+        });
 }
 
 const stampOptions = document.querySelectorAll('.stamp-option');
