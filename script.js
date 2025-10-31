@@ -147,22 +147,55 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ダウンロード機能
-    downloadBtn.addEventListener('click', () => {
-        // ダウンロード前に選択中のスタンプの枠線を消す
-        const selectedStamp = document.querySelector('.stamp:focus');
-        if(selectedStamp) { selectedStamp.blur(); }
-    
-        html2canvas(card, {      
-            scale: 2,
-            useCORS: true 
-        }).then(canvas => {
-            const link = document.createElement('a');
-            link.href = canvas.toDataURL('image/png');
-            link.download = 'profile-card.png';
-            link.click();
-        });
-    });
+// script.js (下の方にあります)
+
+    // ダウンロード機能
+    downloadBtn.addEventListener('click', () => {
+        // ダウンロード前に選択中のスタンプの枠線を消す
+        const selectedStamp = document.querySelector('.stamp:focus');
+        if(selectedStamp) { selectedStamp.blur(); }
+
+        // --- ▼ ここから追加 ▼ ---
+        // スマホ表示の縮小(transform)を一時的に解除
+        const previewElement = document.querySelector('.preview');
+        // 元のインラインスタイルを保存 (通常は空のはず)
+        const originalTransform = previewElement.style.transform;
+        // getComputedStyleで現在適用されているtransformを取得
+        const computedTransform = window.getComputedStyle(previewElement).transform;
+
+        // transformが 'none' 以外 (つまり縮小がかかっている) なら一時解除
+        if (computedTransform !== 'none') {
+            previewElement.style.transform = 'none';
+        }
+        // --- ▲ ここまで追加 ▲ ---
+
+        html2canvas(card, {      
+            scale: 2, // 解像度は2倍のまま
+            useCORS: true 
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = 'profile-card.png';
+            link.click();
+
+            // --- ▼ ここから追加 ▼ ---
+            // 解除したtransformを元に戻す
+            if (computedTransform !== 'none') {
+                previewElement.style.transform = originalTransform;
+            }
+            // --- ▲ ここまで追加 ▲ ---
+
+        }).catch(err => {
+            // --- ▼ ここから追加 (エラー時) ▼ ---
+            // エラーが起きてもtransformを元に戻す
+            console.error('oops, something went wrong!', err);
+            if (computedTransform !== 'none') {
+                previewElement.style.transform = originalTransform;
+            }
+            // --- ▲ ここまで追加 ▲ ---
+        });
+    });
+// 既存のDOMContentLoadedの閉じ括弧
 });
 
 
