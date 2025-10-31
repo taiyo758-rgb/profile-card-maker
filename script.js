@@ -55,26 +55,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ▲ ここまでが新しいコード ▲
 
-    // 星座が選択されたら画像を表示する処理を追加
-    signSelect.addEventListener('change', () => {
-        // 選択されたオプションの要素を取得
-        const selectedOption = signSelect.options[signSelect.selectedIndex];
-        const selectedValue = selectedOption.value; // "aries"など
-        const selectedText = selectedOption.text;   // "牡羊座"など
+// script.js
 
-        if (selectedValue) {
-            // 画像の処理
-            signImage.src = `images/${selectedValue}.png`;
-            signImage.style.display = 'block';
-            // 文字の処理
-             signOutput.textContent = "星座: " + selectedText;
-        } else {
-            // 画像を隠す
-            signImage.style.display = 'none';
-            // 文字をリセット
-            signOutput.textContent = "星座: 未選択";
-        }
-    });
+    // 星座が選択されたら画像を表示する処理を追加
+    signSelect.addEventListener('change', () => {
+        // 選択されたオプションの要素を取得
+        const selectedOption = signSelect.options[signSelect.selectedIndex];
+        const selectedValue = selectedOption.value; // "aries"など
+        const selectedText = selectedOption.text;   // "牡羊座"など
+
+        if (selectedValue) {
+            // 画像の処理 (以下の2行をコメントアウト)
+            // signImage.src = `images/${selectedValue}.png`;
+            // signImage.style.display = 'block';
+            
+            // 文字の処理 (これは残す)
+             signOutput.textContent = "星座: " + selectedText;
+        } else {
+            // 画像を隠す (以下の1行をコメントアウト)
+            // signImage.style.display = 'none';
+            
+            // 文字をリセット (これは残す)
+            signOutput.textContent = "星座: 未選択";
+        }
+    });
 
 
     // 画像切り取りモーダル関連
