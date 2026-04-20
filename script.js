@@ -364,3 +364,134 @@ document.addEventListener('mousedown', (e) => {
         document.querySelectorAll('.stamp').forEach(s => s.classList.remove('is-selected'));
     }
 });
+
+// ==========================================
+// --- ここから下はギャラリー・検索・アップロード機能 ---
+// ==========================================
+
+// 1. 自分を識別するための「マイID」を発行（削除権限の確認用）
+let myUserId = localStorage.getItem('myUserId');
+if (!myUserId) {
+    myUserId = 'user_' + Date.now() + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('myUserId', myUserId);
+}
+
+// 2. ギャラリー用の代数フィルター（ドロップダウン）を準備
+const galleryFilterSelect = document.getElementById('galleryFilterSelect');
+for (let i = 45; i <= 100; i++) {
+    const option = document.createElement('option');
+    option.value = i;
+    option.textContent = i + '代';
+    galleryFilterSelect.appendChild(option);
+}
+
+// 3. アップロードボタンの処理
+const uploadBtn = document.getElementById('uploadBtn');
+uploadBtn.addEventListener('click', () => {
+    // 選択枠を消す、transform解除などの下準備（ダウンロードと同じ）
+    document.querySelectorAll('.stamp.is-selected').forEach(s => s.classList.remove('is-selected'));
+    const previewElement = document.querySelector('.preview');
+    const originalTransform = previewElement.style.transform;
+    const computedTransform = window.getComputedStyle(previewElement).transform;
+    if (computedTransform !== 'none') previewElement.style.transform = 'none';
+
+    // 検索用に、入力されたすべてのテキストを合体させた文字列を作る
+    const searchText = `
+        ${document.getElementById('nameInput').value} 
+        ${document.getElementById('mbtiInput').value} 
+        ${document.getElementById('jobInput').value} 
+        ${document.getElementById('clubInput').value} 
+        ${document.getElementById('stationInput').value} 
+        ${document.getElementById('signSelect').options[document.getElementById('signSelect').selectedIndex].text}
+    `.toLowerCase(); // 小文字にして検索しやすくする
+
+    const generationNumber = document.getElementById('numberInput').value;
+
+    // 画像化（画質を少し落としてデータ量を節約 scale: 1）
+    html2canvas(document.getElementById('card'), { scale: 1, useCORS: true }).then(canvas => {
+        const imageDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        
+        // 保存するデータのまとまりを作る
+        const newCardData = {
+            id: 'card_' + Date.now(),
+            ownerId: myUserId, // これが自分と一致すれば削除できる
+            generation: generationNumber,
+            searchWords: searchText,
+            image: imageDataUrl
+        };
+
+        // ローカルストレージ（ブラウザの擬似データベース）に保存
+        let db = JSON.parse(localStorage.getItem('fakeDatabase')) || [];
+        db.unshift(newCardData); // 一番上に追加
+        localStorage.setItem('fakeDatabase', JSON.stringify(db));
+
+        alert('アップロード完了！みんなのギャラリーに表示されました。');
+        
+        // 元に戻す
+        if (computedTransform !== 'none') previewElement.style.transform = originalTransform;
+        
+        // ギャラリーを更新
+        renderGallery();
+    });
+});
+
+// 4. ギャラリーを表示する関数
+function renderGallery() {
+    const galleryGrid = document.getElementById('galleryGrid');
+    galleryGrid.innerHTML = ''; // 一旦空にする
+
+    // 検索ワードとフィルターの値を取得
+    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+    const filterValue = galleryFilterSelect.value;
+
+    let db = JSON.parse(localStorage.getItem('fakeDatabase')) || [];
+
+    // ※テスト用：他人が作ったダミーデータを1つ追加して、他人の消せないことを見るため
+    if(db.length === 0) {
+        db.push({
+            id: 'dummy1', ownerId: 'other_user_123', generation: '45', searchWords: 'ダミー テスト',
+            image: 'https://via.placeholder.com/600x375.png?text=Someone+Else%27s+Card'
+        });
+    }
+
+    db.forEach(card => {
+        // --- 絞り込み（フィルター・検索）処理 ---
+        // 1. 代数が「すべて」じゃない ＆ カードの代数が一致しないならスキップ
+        if (filterValue !== 'all' && card.generation !== filterValue) return;
+        // 2. 検索ワードが入力されている ＆ ワードが含まれていないならスキップ
+        if (searchQuery && !card.searchWords.includes(searchQuery)) return;
+
+        // カードのHTMLを作る
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+
+        const img = document.createElement('img');
+        img.src = card.image;
+        item.appendChild(img);
+
+        // もしこのカードの作成者(ownerId)が、自分(myUserId)なら削除ボタンを付ける
+        if (card.ownerId === myUserId) {
+            const delBtn = document.createElement('button');
+            delBtn.className = 'delete-btn';
+            delBtn.innerHTML = '×';
+            delBtn.onclick = () => {
+                if(confirm('自分のカードを削除しますか？')) {
+                    // 自分以外のデータを残す＝自分を消す
+                    let updatedDb = db.filter(c => c.id !== card.id);
+                    localStorage.setItem('fakeDatabase', JSON.stringify(updatedDb));
+                    renderGallery(); // 再描画
+                }
+            };
+            item.appendChild(delBtn);
+        }
+
+        galleryGrid.appendChild(item);
+    });
+}
+
+// 5. 検索窓やフィルターが変更されたら、リアルタイムにギャラリーを更新
+document.getElementById('searchInput').addEventListener('input', renderGallery);
+galleryFilterSelect.addEventListener('change', renderGallery);
+
+// 画面読み込み時に1回ギャラリーを表示
+renderGallery();
