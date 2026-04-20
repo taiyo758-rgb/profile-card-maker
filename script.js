@@ -220,98 +220,135 @@ tabButtons.forEach(button => {
 
 // ▼▼▼ この関数を丸ごと置き換えてください ▼▼▼
 function makeInteractable(element) {
-    // .preview要素（カードの親）を取得
-    const previewElement = document.querySelector('.preview');
+    const previewElement = document.querySelector('.preview');
 
-    interact(element)
-        .draggable({ // ドラッグ移動
-            listeners: {
-                // 【追加】ドラッグ開始時
-                start(event) {
-                    const target = event.target;
-                    let previewScale = 1;
+    interact(element)
+        .draggable({
+            ignoreFrom: '.resize-handle', // 四隅のハンドル以外をドラッグした時のみ移動
+            listeners: {
+                start(event) {
+                    const target = event.target;
+                    let previewScale = 1;
+                    if (previewElement) {
+                        const transform = window.getComputedStyle(previewElement).transform;
+                        if (transform && transform !== 'none') {
+                            const matrix = transform.match(/matrix\(([^)]+)\)/);
+                            if (matrix && matrix[1]) {
+                                previewScale = parseFloat(matrix[1].split(', ')[0]);
+                            } else if (transform.startsWith('scale(')) {
+                                previewScale = parseFloat(transform.substring(6));
+                            }
+                        }
+                    }
+                    if (!previewScale || previewScale === 0) previewScale = 1;
+                    target.setAttribute('data-preview-scale', previewScale);
+                },
+                move(event) {
+                    const target = event.target;
+                    const previewScale = parseFloat(target.getAttribute('data-preview-scale')) || 1;
+                    
+                    const x = (parseFloat(target.getAttribute('data-x')) || 0) + (event.dx / previewScale);
+                    const y = (parseFloat(target.getAttribute('data-y')) || 0) + (event.dy / previewScale);
 
-                    // ドラッグ開始時にプレビューの縮小率を計算して保存
-                    if (previewElement) {
-                        const style = window.getComputedStyle(previewElement);
-                        const transform = style.transform;
-                        
-                        if (transform && transform !== 'none') {
-                            // matrix(scaleX, 0, 0, scaleY, tx, ty)
-                            const matrix = transform.match(/matrix\(([^)]+)\)/);
-                            if (matrix && matrix[1]) {
-                                const values = matrix[1].split(', ');
-                                previewScale = parseFloat(values[0]); // matrixからscaleXを取得
-                            } else if (transform.startsWith('scale(')) {
-                                // scale(value)
-                                previewScale = parseFloat(transform.substring(6));
-                            }
-                        }
-                    }
-                    
-                    if (!previewScale || previewScale === 0) {
-                        previewScale = 1; 
-                    }
-                    
-                    // 計算した縮小率をdata属性に保存
-                    target.setAttribute('data-preview-scale', previewScale);
-                },
-                move(event) {
-                    const target = event.target;
+                    target.style.transform = `translate(${x}px, ${y}px)`;
+                    target.setAttribute('data-x', x);
+                    target.setAttribute('data-y', y);
+                }
+            }
+        })
+        .resizable({
+            // 四隅のクラスを指定してリサイズを許可
+            edges: { left: '.tl, .bl', right: '.tr, .br', top: '.tl, .tr', bottom: '.bl, .br' },
+            modifiers: [
+                interact.modifiers.aspectRatio({ ratio: 'preserve' }), // 縦横比を固定
+                interact.modifiers.restrictSize({ min: { width: 20, height: 20 } }) // 最小サイズ
+            ],
+            listeners: {
+                start(event) {
+                    const target = event.target;
+                    // リサイズ開始時のサイズを記憶
+                    const rect = target.getBoundingClientRect();
+                    const previewScale = parseFloat(target.getAttribute('data-preview-scale')) || 1;
+                    target.setAttribute('data-start-w', rect.width / previewScale);
+                    target.setAttribute('data-start-fontsize', parseFloat(window.getComputedStyle(target).fontSize) || 50);
+                },
+                move(event) {
+                    const target = event.target;
+                    const previewScale = parseFloat(target.getAttribute('data-preview-scale')) || 1;
 
-                    // --- startで保存した縮小率を取得 ---
-                    const previewScale = parseFloat(target.getAttribute('data-preview-scale')) || 1;
+                    // 位置の更新（左や上を引っ張った際の座標調整）
+                    let x = (parseFloat(target.getAttribute('data-x')) || 0) + (event.deltaRect.left / previewScale);
+                    let y = (parseFloat(target.getAttribute('data-y')) || 0) + (event.deltaRect.top / previewScale);
 
-                    // data属性から現在の位置とスケールを取得
-                    const x = (parseFloat(target.getAttribute('data-x')) || 0);
-                    const y = (parseFloat(target.getAttribute('data-y')) || 0);
-                    const scale = parseFloat(target.getAttribute('data-scale')) || 1;
-                    
-                    // 【修正】指の移動量(event.dx, event.dy)をプレビューの縮小率で割る
-                    const adjustedDx = event.dx / previewScale;
-                    const adjustedDy = event.dy / previewScale;
+                    // 新しい幅と高さ
+                    const newWidth = event.rect.width / previewScale;
+                    const newHeight = event.rect.height / previewScale;
 
-                    const newX = x + adjustedDx;
-                    const newY = y + adjustedDy;
+                    // 幅の比率に合わせてフォントサイズも変更する（絵文字を追従させるため）
+                    const startW = parseFloat(target.getAttribute('data-start-w'));
+                    const startFontSize = parseFloat(target.getAttribute('data-start-fontsize'));
+                    const newFontSize = startFontSize * (newWidth / startW);
 
-                    // 位置とスケールを同時にtransformに設定
-                    target.style.transform = `translate(${newX}px, ${newY}px) scale(${scale})`;
+                    // 適用
+                    Object.assign(target.style, {
+                        width: `${newWidth}px`,
+                        height: `${newHeight}px`,
+                        fontSize: `${newFontSize}px`,
+                        transform: `translate(${x}px, ${y}px)`
+                    });
 
-                    // data属性を更新
-                    target.setAttribute('data-x', newX);
-                    target.setAttribute('data-y', newY);
-                }
-            }
-        })
-        .gesturable({ // ピンチ操作 (拡大縮小)
-            onstart(event) {
-                // ジェスチャー開始時のスケールをdata属性に記録
-                const target = event.target;
-                target.setAttribute('data-start-scale', parseFloat(target.getAttribute('data-scale')) || 1);
-            },
-            onmove(event) {
-                const target = event.target;
-                const startScale = parseFloat(target.getAttribute('data-start-scale')) || 1;
-                
-                let scale = startScale * event.scale;
-                // スケールの最小・最大値を設定 (例: 0.3倍～5倍)
-                scale = Math.max(0.3, Math.min(scale, 5.0));
+                    Object.assign(target.dataset, { x, y });
+                }
+            }
+        })
+        .gesturable({ // スマホのピンチ操作対応
+            onstart(event) {
+                const target = event.target;
+                target.setAttribute('data-start-w', target.offsetWidth);
+                target.setAttribute('data-start-h', target.offsetHeight);
+                target.setAttribute('data-start-fontsize', parseFloat(window.getComputedStyle(target).fontSize) || 50);
+            },
+            onmove(event) {
+                const target = event.target;
+                const startW = parseFloat(target.getAttribute('data-start-w'));
+                const startH = parseFloat(target.getAttribute('data-start-h'));
+                const startFontSize = parseFloat(target.getAttribute('data-start-fontsize'));
+                
+                const scale = event.scale;
+                const newWidth = Math.max(20, startW * scale);
+                const newHeight = Math.max(20, startH * scale);
+                const newFontSize = startFontSize * (newWidth / startW);
 
-                // data属性から現在の位置を取得
-                const x = (parseFloat(target.getAttribute('data-x')) || 0);
-                const y = (parseFloat(target.getAttribute('data-y')) || 0);
+                const x = parseFloat(target.getAttribute('data-x')) || 0;
+                const y = parseFloat(target.getAttribute('data-y')) || 0;
 
-                // transformで位置とスケールを同時に設定
-                target.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
-                
-                // 変更後のスケールをdata属性に保存
-                target.setAttribute('data-scale', scale);
-            }
-        })
-        .on('doubletap', (event) => { // スマホのダブルタップで削除
-            event.target.remove();
-        });
+                Object.assign(target.style, {
+                    width: `${newWidth}px`,
+                    height: `${newHeight}px`,
+                    fontSize: `${newFontSize}px`,
+                    transform: `translate(${x}px, ${y}px)`
+                });
+            }
+        })
+        .on('down', (event) => { // タッチまたはクリックされた時
+            // 全てのスタンプの選択を解除してから、クリックしたものだけ選択
+            document.querySelectorAll('.stamp').forEach(s => s.classList.remove('is-selected'));
+            element.classList.add('is-selected');
+        })
+        .on('doubletap', (event) => { // ダブルタップで削除
+            // ハンドルをダブルクリックした場合は削除しない
+            if (event.target.classList.contains('resize-handle')) return;
+            element.remove();
+        });
 }
+
+// ▼▼▼ 画面の背景等をクリックしたら選択枠を消す処理 (script.jsの末尾などに追加) ▼▼▼
+document.addEventListener('mousedown', (e) => {
+    // クリックした要素がスタンプやスタンプメニューでなければ選択解除
+    if (!e.target.closest('.stamp') && !e.target.closest('.stamp-option')) {
+        document.querySelectorAll('.stamp').forEach(s => s.classList.remove('is-selected'));
+    }
+});
 
 // ▼▼▼ スタンプ生成処理を丸ごと置き換えてください ▼▼▼
 const stampOptions = document.querySelectorAll('.stamp-option');
