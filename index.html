@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WASA天文自己紹介カードメーカー</title>
+
+    <script>
+        var ua = navigator.userAgent || navigator.vendor || window.opera;
+        // ユーザー環境がLINEであり、かつURLに openExternalBrowser=1 が含まれていない場合
+        if ((ua.indexOf("Line") > -1) && (window.location.search.indexOf("openExternalBrowser=1") === -1)) {
+            var url = new URL(window.location.href);
+            // LINE専用の外部ブラウザ起動パラメータを追加
+            url.searchParams.append('openExternalBrowser', '1');
+            // パラメータ付きのURLに移動（これで自動的にSafariやChromeが開きます）
+            window.location.href = url.toString();
+        }
+    </script>
     <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
