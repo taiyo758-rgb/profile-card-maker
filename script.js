@@ -439,7 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (adminDownloadBtn) {
         adminDownloadBtn.addEventListener('click', () => {
             const password = prompt('管理者パスワードを入力してください:');
-            const adminPassword = 'wasa'; // パスワード
+            const adminPassword = 'wasawasa2026'; // パスワード
 
             if (password === null) return;
             if (password === adminPassword) {
