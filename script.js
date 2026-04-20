@@ -24,17 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const mbtiOutput = document.getElementById('mbtiOutput');
     const clubInput = document.getElementById('clubInput');
     const clubOutput = document.getElementById('clubOutput');
-    const signInput = document.getElementById('signInput');
     const signOutput = document.getElementById('signOutput');
 
-    // ▼ ここからが新しいコード ▼
-
-    // 数字選択の要素を取得
     const numberInput = document.getElementById('numberInput');
     const numberOutput = document.getElementById('numberOutput');
-
     const signSelect = document.getElementById('signSelect');
-    const signImage = document.getElementById('signImage');
 
     // 1. ドロップダウンに45から100までの選択肢を作成
     for (let i = 45; i <= 100; i++) {
@@ -53,33 +47,18 @@ document.addEventListener('DOMContentLoaded', () => {
         numberOutput.textContent = numberInput.value;
     });
 
-    // ▲ ここまでが新しいコード ▲
+    // 星座が選択されたら文字を表示する処理
+    signSelect.addEventListener('change', () => {
+        const selectedOption = signSelect.options[signSelect.selectedIndex];
+        const selectedValue = selectedOption.value;
+        const selectedText = selectedOption.text;
 
-// script.js
-
-    // 星座が選択されたら画像を表示する処理を追加
-    signSelect.addEventListener('change', () => {
-        // 選択されたオプションの要素を取得
-        const selectedOption = signSelect.options[signSelect.selectedIndex];
-        const selectedValue = selectedOption.value; // "aries"など
-        const selectedText = selectedOption.text;   // "牡羊座"など
-
-        if (selectedValue) {
-            // 画像の処理 (以下の2行をコメントアウト)
-            // signImage.src = `images/${selectedValue}.png`;
-            // signImage.style.display = 'block';
-            
-            // 文字の処理 (これは残す)
-             signOutput.textContent = "星座: " + selectedText;
-        } else {
-            // 画像を隠す (以下の1行をコメントアウト)
-            // signImage.style.display = 'none';
-            
-            // 文字をリセット (これは残す)
-            signOutput.textContent = "星座: 未選択";
-        }
-    });
-
+        if (selectedValue) {
+             signOutput.textContent = "星座: " + selectedText;
+        } else {
+            signOutput.textContent = "星座: 未選択";
+        }
+    });
 
     // 画像切り取りモーダル関連
     const modal = document.getElementById('cropModal');
@@ -88,8 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let cropper;
     let currentPhotoElement;
-
-    // --- 既存の機能の実装 ---
 
     // 背景画像の変更
     document.querySelectorAll('input[name="bg"]').forEach(radio => {
@@ -107,8 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
     commentInput.addEventListener('input', () => commentOutput.textContent = "一言コメント: " + (commentInput.value || ''));
     mbtiInput.addEventListener('input', () => mbtiOutput.textContent = "MBTI: " + (mbtiInput.value || '未入力'));
     clubInput.addEventListener('input', () => clubOutput.textContent = "高校時代の部活: " + (clubInput.value || '未入力'));
-    
-
 
     // 写真アップロードと切り取り処理
     function setupImageUpload(uploadElement, photoElement) {
@@ -147,8 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-// script.js (下の方にあります)
-
     // ダウンロード機能
     downloadBtn.addEventListener('click', () => {
         // ダウンロード前にすべてのスタンプの選択枠（四隅のハンドル）を消す
@@ -156,49 +129,40 @@ document.addEventListener('DOMContentLoaded', () => {
             s.classList.remove('is-selected');
         });
 
-        // --- ▼ ここから追加 ▼ ---
         // スマホ表示の縮小(transform)を一時的に解除
         const previewElement = document.querySelector('.preview');
-        // 元のインラインスタイルを保存 (通常は空のはず)
-        const originalTransform = previewElement.style.transform;
-        // getComputedStyleで現在適用されているtransformを取得
-        const computedTransform = window.getComputedStyle(previewElement).transform;
+        const originalTransform = previewElement.style.transform;
+        const computedTransform = window.getComputedStyle(previewElement).transform;
 
-        // transformが 'none' 以外 (つまり縮小がかかっている) なら一時解除
-        if (computedTransform !== 'none') {
-            previewElement.style.transform = 'none';
-        }
-        // --- ▲ ここまで追加 ▲ ---
+        if (computedTransform !== 'none') {
+            previewElement.style.transform = 'none';
+        }
 
-        html2canvas(card, {      
-            scale: 2, // 解像度は2倍のまま
-            useCORS: true 
-        }).then(canvas => {
-            const link = document.createElement('a');
-            link.href = canvas.toDataURL('image/png');
-            link.download = 'profile-card.png';
-            link.click();
+        html2canvas(card, {     
+            scale: 2,
+            useCORS: true 
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = 'profile-card.png';
+            link.click();
 
-            // --- ▼ ここから追加 ▼ ---
-            // 解除したtransformを元に戻す
-            if (computedTransform !== 'none') {
-                previewElement.style.transform = originalTransform;
-            }
-            // --- ▲ ここまで追加 ▲ ---
+            if (computedTransform !== 'none') {
+                previewElement.style.transform = originalTransform;
+            }
+        }).catch(err => {
+            console.error('oops, something went wrong!', err);
+            if (computedTransform !== 'none') {
+                previewElement.style.transform = originalTransform;
+            }
+        });
+    });
+}); // <--- ここまでが DOMContentLoaded (初期設定)
 
-        }).catch(err => {
-            // --- ▼ ここから追加 (エラー時) ▼ ---
-            // エラーが起きてもtransformを元に戻す
-            console.error('oops, something went wrong!', err);
-            if (computedTransform !== 'none') {
-                previewElement.style.transform = originalTransform;
-            }
-            // --- ▲ ここまで追加 ▲ ---
-        });
-    });
-// 既存のDOMContentLoadedの閉じ括弧
-});
 
+// ==========================================
+// --- ここから下はタブ機能やスタンプの処理 ---
+// ==========================================
 
 // --- タブ機能の処理 ---
 const tabButtons = document.querySelectorAll('.tab-btn');
@@ -206,22 +170,77 @@ const tabContents = document.querySelectorAll('.tab-content');
 
 tabButtons.forEach(button => {
     button.addEventListener('click', () => {
-        // クリックされたボタンのdata-tab属性を取得
         const tabId = button.getAttribute('data-tab');
-
-        // すべてのボタンとコンテンツからactiveクラスを削除
         tabButtons.forEach(btn => btn.classList.remove('active'));
         tabContents.forEach(content => content.classList.remove('active'));
-
-        // クリックされたボタンに対応するコンテンツにactiveクラスを追加
         button.classList.add('active');
         document.getElementById(tabId).classList.add('active');
     });
 });
 
-// ▼▼▼ この関数を丸ごと置き換えてください ▼▼▼
+// --- 拡大編集用の画面（オーバーレイ）と完了ボタンを作成 ---
+const overlay = document.createElement('div');
+overlay.id = 'stampOverlay';
+document.body.appendChild(overlay);
+
+const closeBtn = document.createElement('button');
+closeBtn.id = 'closeStampOverlay';
+closeBtn.textContent = '完了';
+document.body.appendChild(closeBtn);
+
+// 「完了」ボタンを押した時の処理
+closeBtn.addEventListener('click', () => {
+    document.querySelectorAll('.photo-container').forEach(container => {
+        container.classList.remove('is-editing-stamps');
+    });
+    overlay.style.display = 'none';
+    closeBtn.style.display = 'none';
+    
+    // 選択枠もついでに消す
+    document.querySelectorAll('.stamp').forEach(s => s.classList.remove('is-selected'));
+});
+
+// --- スタンプ生成処理 ---
+const stampOptions = document.querySelectorAll('.stamp-option');
+stampOptions.forEach(option => {
+    option.addEventListener('click', () => {
+        const targetId = document.querySelector('input[name="stampTarget"]:checked').value;
+        const targetContainer = document.getElementById(targetId);
+        if (!targetContainer) return;
+
+        const newStamp = document.createElement('div');
+        newStamp.classList.add('stamp');
+
+        const content = document.createElement('div');
+        content.classList.add('stamp-content');
+        if (option.classList.contains('mosaic')) {
+            content.classList.add('mosaic');
+        }
+        content.textContent = option.textContent;
+        newStamp.appendChild(content);
+
+        const corners = ['tl', 'tr', 'bl', 'br'];
+        corners.forEach(pos => {
+            const handle = document.createElement('div');
+            handle.className = `resize-handle ${pos}`;
+            newStamp.appendChild(handle);
+        });
+        
+        targetContainer.appendChild(newStamp);
+        makeInteractable(newStamp);
+
+        document.querySelectorAll('.stamp').forEach(s => s.classList.remove('is-selected'));
+        newStamp.classList.add('is-selected');
+
+        // 写真のみを拡大表示するモードに切り替え
+        targetContainer.classList.add('is-editing-stamps');
+        document.getElementById('stampOverlay').style.display = 'block';
+        document.getElementById('closeStampOverlay').style.display = 'block';
+    });
+});
+
+// --- スタンプのドラッグ＆リサイズ処理 ---
 function makeInteractable(element) {
-    // 親要素（写真）が現在何倍に拡大表示されているかを動的に計算する関数
     const getParentScale = (target) => {
         const parent = target.parentElement;
         if (!parent) return 1;
@@ -236,7 +255,6 @@ function makeInteractable(element) {
             listeners: {
                 start(event) {
                     const target = event.target;
-                    // ドラッグ開始時に写真の現在の拡大率を取得
                     const previewScale = getParentScale(target);
                     target.setAttribute('data-preview-scale', previewScale);
                 },
@@ -294,7 +312,7 @@ function makeInteractable(element) {
                 }
             }
         })
-        .gesturable({ // スマホのピンチ操作対応
+        .gesturable({
             onstart(event) {
                 const target = event.target;
                 target.setAttribute('data-start-w', target.offsetWidth);
@@ -333,76 +351,9 @@ function makeInteractable(element) {
         });
 }
 
-// ▼▼▼ 画面の背景等をクリックしたら選択枠を消す処理 (script.jsの末尾などに追加) ▼▼▼
+// 画面の背景等をクリックしたら選択枠を消す処理
 document.addEventListener('mousedown', (e) => {
-    // クリックした要素がスタンプやスタンプメニューでなければ選択解除
     if (!e.target.closest('.stamp') && !e.target.closest('.stamp-option')) {
         document.querySelectorAll('.stamp').forEach(s => s.classList.remove('is-selected'));
     }
-});
-
-// ▼▼▼ スタンプ生成処理を丸ごと置き換えてください ▼▼▼
-const stampOptions = document.querySelectorAll('.stamp-option');
-stampOptions.forEach(option => {
-    option.addEventListener('click', () => {
-        const targetId = document.querySelector('input[name="stampTarget"]:checked').value;
-        const targetContainer = document.getElementById(targetId);
-        if (!targetContainer) return;
-
-        const newStamp = document.createElement('div');
-        newStamp.classList.add('stamp');
-
-        const content = document.createElement('div');
-        content.classList.add('stamp-content');
-        if (option.classList.contains('mosaic')) {
-            content.classList.add('mosaic');
-        }
-        content.textContent = option.textContent;
-        newStamp.appendChild(content);
-
-        const corners = ['tl', 'tr', 'bl', 'br'];
-        corners.forEach(pos => {
-            const handle = document.createElement('div');
-            handle.className = `resize-handle ${pos}`;
-            newStamp.appendChild(handle);
-        });
-        
-        targetContainer.appendChild(newStamp);
-        makeInteractable(newStamp);
-
-        document.querySelectorAll('.stamp').forEach(s => s.classList.remove('is-selected'));
-        newStamp.classList.add('is-selected');
-
-        // --- ここからが変更箇所：写真のみを拡大表示する ---
-        targetContainer.classList.add('is-editing-stamps');
-        document.getElementById('stampOverlay').style.display = 'block';
-        document.getElementById('closeStampOverlay').style.display = 'block';
-    });
-});
-        
-        targetContainer.appendChild(newStamp);
-        makeInteractable(newStamp);
-    });
-});
-
-// ▼▼▼ 拡大編集用の画面（オーバーレイ）と完了ボタンを作成 ▼▼▼
-const overlay = document.createElement('div');
-overlay.id = 'stampOverlay';
-document.body.appendChild(overlay);
-
-const closeBtn = document.createElement('button');
-closeBtn.id = 'closeStampOverlay';
-closeBtn.textContent = '完了';
-document.body.appendChild(closeBtn);
-
-// 「完了」ボタンを押した時の処理（拡大モードを終了して元に戻す）
-closeBtn.addEventListener('click', () => {
-    document.querySelectorAll('.photo-container').forEach(container => {
-        container.classList.remove('is-editing-stamps');
-    });
-    overlay.style.display = 'none';
-    closeBtn.style.display = 'none';
-    
-    // 選択枠もついでに消す
-    document.querySelectorAll('.stamp').forEach(s => s.classList.remove('is-selected'));
 });
