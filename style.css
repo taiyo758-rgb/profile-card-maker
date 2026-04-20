@@ -1,9 +1,30 @@
 /* 全体のスタイル */
 body {
     font-family: sans-serif;
-    background-color: #f0f0f0;
     margin: 20px;
+    /* ▼ 変更：美しい宇宙のフリー画像を背景に設定 ▼ */
+    background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2048&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* スクロールしても星空を固定 */
 }
+
+/* タイトルを白文字にして宇宙に映えるように */
+h1 {
+    color: white;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* 各エリアを「すりガラス風」にして文字を読みやすくする */
+.settings, .preview, .gallery-section, .admin-section {
+    background-color: rgba(255, 255, 255, 0.85); /* 85%の透けた白 */
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); /* ふんわりとした影 */
+}
+
 .container {
     display: flex;
     gap: 30px;
