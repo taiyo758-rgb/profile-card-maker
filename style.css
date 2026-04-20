@@ -1,3 +1,33 @@
+/* ▼ 追加：背景アニメーション用のCSS ▼ */
+#starfield {
+    position: fixed; /* 画面に固定 */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1; /* 一番奥に配置 */
+    /* 宇宙っぽい深い色のグラデーション */
+    background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+}
+
+/* 既存のbodyのスタイルを一部修正 */
+body {
+    /* font-family: sans-serif; margin: 20px; はそのまま */
+    background-color: transparent !important; /* 元の背景色を透明に */
+}
+
+/* ギャラリーセクションなどの背景を少し白くして文字を読みやすくする調整（お好みで） */
+.settings, .gallery-section, .tab-content {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    padding: 20px;
+    border-radius: 8px;
+}
+h1 {
+    color: white; /* タイトルを白文字にして宇宙に映えるように */
+    text-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+/* ▲ 追加ここまで ▲ */
+
 /* 全体のスタイル */
 body {
     font-family: sans-serif;
