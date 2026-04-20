@@ -181,7 +181,8 @@ tabButtons.forEach(button => {
 // --- 拡大編集用の画面（オーバーレイ）と完了ボタンを作成 ---
 const overlay = document.createElement('div');
 overlay.id = 'stampOverlay';
-document.body.appendChild(overlay);
+// 【修正】bodyではなくcardの中に入れることで、スマホでの重なり順エラーを回避！
+document.getElementById('card').appendChild(overlay);
 
 const closeBtn = document.createElement('button');
 closeBtn.id = 'closeStampOverlay';
@@ -195,6 +196,9 @@ closeBtn.addEventListener('click', () => {
     });
     overlay.style.display = 'none';
     closeBtn.style.display = 'none';
+    
+    // カードのはみ出し非表示設定を元に戻す
+    document.getElementById('card').style.overflow = 'hidden';
     
     // 選択枠もついでに消す
     document.querySelectorAll('.stamp').forEach(s => s.classList.remove('is-selected'));
@@ -236,6 +240,9 @@ stampOptions.forEach(option => {
         targetContainer.classList.add('is-editing-stamps');
         document.getElementById('stampOverlay').style.display = 'block';
         document.getElementById('closeStampOverlay').style.display = 'block';
+        
+        // 【追加】拡大時に写真がカードの枠で見切れないようにする
+        document.getElementById('card').style.overflow = 'visible';
     });
 });
 
