@@ -139,6 +139,31 @@
         </div>
     </div>
 
+    <div class="gallery-section">
+            <h2>みんなの自己紹介カード（プレビュー版）</h2>
+            
+            <div class="gallery-controls">
+                <input type="text" id="searchInput" class="search-input" placeholder="🔍 「ENFJ」「カフェ」「テニス」などで検索...">
+                
+                <div class="filter-container">
+                    <span>代数フィルター:</span>
+                    <select id="galleryFilterSelect">
+                        <option value="all">すべて表示</option>
+                        </select>
+                </div>
+            </div>
+
+            <div id="galleryGrid" class="gallery-grid">
+                </div>
+        </div>
+        ```
+
+さらに、左側の設定エリアにある「ダウンロードボタン」の横に**「アップロードボタン」**を追加します。
+
+```html
+            <button id="downloadBtn">カードを画像としてダウンロード</button>
+            <button id="uploadBtn" class="upload-btn">サイトにアップロードして共有</button>
+
     <div id="cropModal" class="modal">
         <div class="modal-content">
             <h2>画像を切り取る</h2>
