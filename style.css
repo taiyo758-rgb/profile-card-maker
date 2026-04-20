@@ -395,3 +395,83 @@ fieldset {
         transform: translate(-50%, -50%) scale(1.5) !important; 
     }
 }
+
+/* --- ギャラリー・検索セクションのスタイル --- */
+.upload-btn {
+    background-color: #28a745;
+    margin-top: 10px;
+    width: 100%;
+}
+.upload-btn:hover { background-color: #218838; }
+
+.gallery-section {
+    flex-basis: 100%;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 2px dashed #ccc;
+    width: 100%;
+}
+
+.gallery-controls {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-input {
+    flex: 2;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #007bff;
+    border-radius: 5px;
+}
+
+.filter-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+/* ギャラリー内のカード */
+.gallery-item {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* 削除ボタン（自分のにだけ表示される） */
+.delete-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(255, 0, 0, 0.8);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.delete-btn:hover { background: red; }
