@@ -221,27 +221,23 @@ tabButtons.forEach(button => {
 
 // ▼▼▼ この関数を丸ごと置き換えてください ▼▼▼
 function makeInteractable(element) {
-    const previewElement = document.querySelector('.preview');
+    // 親要素（写真）が現在何倍に拡大表示されているかを動的に計算する関数
+    const getParentScale = (target) => {
+        const parent = target.parentElement;
+        if (!parent) return 1;
+        const rect = parent.getBoundingClientRect();
+        const offsetWidth = parent.offsetWidth;
+        return offsetWidth > 0 ? (rect.width / offsetWidth) : 1;
+    };
 
     interact(element)
         .draggable({
-            ignoreFrom: '.resize-handle', // 四隅のハンドル以外をドラッグした時のみ移動
+            ignoreFrom: '.resize-handle',
             listeners: {
                 start(event) {
                     const target = event.target;
-                    let previewScale = 1;
-                    if (previewElement) {
-                        const transform = window.getComputedStyle(previewElement).transform;
-                        if (transform && transform !== 'none') {
-                            const matrix = transform.match(/matrix\(([^)]+)\)/);
-                            if (matrix && matrix[1]) {
-                                previewScale = parseFloat(matrix[1].split(', ')[0]);
-                            } else if (transform.startsWith('scale(')) {
-                                previewScale = parseFloat(transform.substring(6));
-                            }
-                        }
-                    }
-                    if (!previewScale || previewScale === 0) previewScale = 1;
+                    // ドラッグ開始時に写真の現在の拡大率を取得
+                    const previewScale = getParentScale(target);
                     target.setAttribute('data-preview-scale', previewScale);
                 },
                 move(event) {
@@ -258,18 +254,18 @@ function makeInteractable(element) {
             }
         })
         .resizable({
-            // 四隅のクラスを指定してリサイズを許可
             edges: { left: '.tl, .bl', right: '.tr, .br', top: '.tl, .tr', bottom: '.bl, .br' },
             modifiers: [
-                interact.modifiers.aspectRatio({ ratio: 'preserve' }), // 縦横比を固定
-                interact.modifiers.restrictSize({ min: { width: 20, height: 20 } }) // 最小サイズ
+                interact.modifiers.aspectRatio({ ratio: 'preserve' }),
+                interact.modifiers.restrictSize({ min: { width: 20, height: 20 } })
             ],
             listeners: {
                 start(event) {
                     const target = event.target;
-                    // リサイズ開始時のサイズを記憶
                     const rect = target.getBoundingClientRect();
-                    const previewScale = parseFloat(target.getAttribute('data-preview-scale')) || 1;
+                    const previewScale = getParentScale(target);
+                    target.setAttribute('data-preview-scale', previewScale);
+                    
                     target.setAttribute('data-start-w', rect.width / previewScale);
                     target.setAttribute('data-start-fontsize', parseFloat(window.getComputedStyle(target).fontSize) || 50);
                 },
@@ -277,20 +273,16 @@ function makeInteractable(element) {
                     const target = event.target;
                     const previewScale = parseFloat(target.getAttribute('data-preview-scale')) || 1;
 
-                    // 位置の更新（左や上を引っ張った際の座標調整）
                     let x = (parseFloat(target.getAttribute('data-x')) || 0) + (event.deltaRect.left / previewScale);
                     let y = (parseFloat(target.getAttribute('data-y')) || 0) + (event.deltaRect.top / previewScale);
 
-                    // 新しい幅と高さ
                     const newWidth = event.rect.width / previewScale;
                     const newHeight = event.rect.height / previewScale;
 
-                    // 幅の比率に合わせてフォントサイズも変更する（絵文字を追従させるため）
                     const startW = parseFloat(target.getAttribute('data-start-w'));
                     const startFontSize = parseFloat(target.getAttribute('data-start-fontsize'));
                     const newFontSize = startFontSize * (newWidth / startW);
 
-                    // 適用
                     Object.assign(target.style, {
                         width: `${newWidth}px`,
                         height: `${newHeight}px`,
@@ -331,13 +323,11 @@ function makeInteractable(element) {
                 });
             }
         })
-        .on('down', (event) => { // タッチまたはクリックされた時
-            // 全てのスタンプの選択を解除してから、クリックしたものだけ選択
+        .on('down', (event) => { 
             document.querySelectorAll('.stamp').forEach(s => s.classList.remove('is-selected'));
             element.classList.add('is-selected');
         })
-        .on('doubletap', (event) => { // ダブルタップで削除
-            // ハンドルをダブルクリックした場合は削除しない
+        .on('doubletap', (event) => { 
             if (event.target.classList.contains('resize-handle')) return;
             element.remove();
         });
@@ -362,7 +352,6 @@ stampOptions.forEach(option => {
         const newStamp = document.createElement('div');
         newStamp.classList.add('stamp');
 
-        // スタンプの中身(絵文字等)を入れるコンテナ
         const content = document.createElement('div');
         content.classList.add('stamp-content');
         if (option.classList.contains('mosaic')) {
@@ -371,7 +360,6 @@ stampOptions.forEach(option => {
         content.textContent = option.textContent;
         newStamp.appendChild(content);
 
-        // 4隅の操作ハンドル（リサイズ用）を追加
         const corners = ['tl', 'tr', 'bl', 'br'];
         corners.forEach(pos => {
             const handle = document.createElement('div');
@@ -382,9 +370,13 @@ stampOptions.forEach(option => {
         targetContainer.appendChild(newStamp);
         makeInteractable(newStamp);
 
-        // 追加した瞬間に他の選択を解除し、これを「選択状態」にする
         document.querySelectorAll('.stamp').forEach(s => s.classList.remove('is-selected'));
         newStamp.classList.add('is-selected');
+
+        // --- ここからが変更箇所：写真のみを拡大表示する ---
+        targetContainer.classList.add('is-editing-stamps');
+        document.getElementById('stampOverlay').style.display = 'block';
+        document.getElementById('closeStampOverlay').style.display = 'block';
     });
 });
         
