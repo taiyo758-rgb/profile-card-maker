@@ -16,9 +16,8 @@ body {
     flex-basis: 70%;
 }
 fieldset {
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    border: none;
+    margin-bottom: 0;
 }
 input[type="text"], textarea, select { width: 90%; padding: 5px; }
 button {
@@ -44,29 +43,24 @@ button:hover {
     cursor: pointer;
     border: 1px solid #ccc;
     background-color: #007bff;
-    color white;
+    color: white;
     border-radius: 5px 5px 0 0;
     margin-right: -1px;
 }
 .tab-btn.active {
-    background-color: #0056b3; /* 背景色を濃い青に変更 */
-    border-bottom: 1px solid #0056b3; /* 下線を同じ色に */
-    color: white; /* 文字色を白に指定 */
+    background-color: #0056b3; 
+    border-bottom: 1px solid #0056b3; 
+    color: white; 
 }
 .tab-content {
-    display: none; /* 初期状態では非表示 */
+    display: none; 
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 0 5px 5px 5px;
     background-color: white;
 }
 .tab-content.active {
-    display: block; /* 選択されたタブのみ表示 */
-}
-/* タブ化に伴い、fieldsetのボーダーは不要に */
-fieldset {
-    border: none;
-    margin-bottom: 0;
+    display: block; 
 }
 
 /* カードのスタイル */
@@ -80,7 +74,6 @@ fieldset {
     background-image: url('images/bg1.jpg');
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    /* ▼ 変更: メイリオ等を消して、追加したWebフォントを指定 ▼ */
     font-family: 'Noto Sans JP', sans-serif; 
 }
 /* 写真エリアのスタイル */
@@ -97,15 +90,7 @@ fieldset {
     object-fit: cover;
 }
 
-/* --- 各写真とテキストの位置・サイズ調整 --- */
-
-
-.photo1 {
-    width: 100%;
-    height: 100%;
-}
-
-.photo2 {
+.photo1, .photo2 {
     width: 100%;
     height: 100%;
 }
@@ -117,28 +102,17 @@ fieldset {
     width: 250px;
     height: 250px;
     object-fit: contain;
-    display: none !important; /* 初期状態では非表示 */
+    display: none !important; 
 }
 
-/* style.css */
-
-/* --- 各写真とテキストの位置・サイズ調整 --- */
-
-/* （この上の既存のphoto1, photo2, sign-image-areaのスタイルはそのまま） */
-
+/* --- 各テキストの位置・サイズ調整 --- */
 .text-area {
     position: absolute;
     background-color: transparent;
     padding: 5px 10px;
     color: white;
     text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
-    /* ここに共通の文字サイズを設定することもできますが、
-       各項目で個別に設定する方が柔軟です。
-       今回は各項目で個別に設定します。
-    */
 }
-
-/* --- 各写真とテキストの位置・サイズ調整 --- */
 
 .name { top: 280px; left: 60px; font-size: 24px; }
 .grade { top: 320px; left: 60px; font-size: 24px; }
@@ -157,8 +131,6 @@ fieldset {
     line-height: 1.4; 
 }
 
-/* （この下の固定ロゴやタイトル、モーダルなどのスタイルはそのまま） */
-
 /* 固定ロゴ画像のスタイル */
 .fixed-logo-image {
     position: absolute;
@@ -166,7 +138,7 @@ fieldset {
     left: 50px;
     width: 230px;
     height: 230px;
-    border-radius: 50%; /* 円形にする場合。四角形がいい場合はこの行を削除 */
+    border-radius: 50%; 
 }
 
 .profile-title {
@@ -176,10 +148,8 @@ fieldset {
     font-size: 120px;
     font-weight: 500;
     font-family: "Cinzel", serif; 
-    color: #a8d8e9; /* 文字の基本色 (画像に近い薄い水色) */
-    text-shadow: 
-        1px 1px 1px rgba(0, 0, 0, 0.4),      /* 右下の濃い影 */
-        -1px -1px 1px rgba(255, 255, 255, 0.6); /* 左上の明るい光 (ハイライト) */
+    color: #a8d8e9; 
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4), -1px -1px 1px rgba(255, 255, 255, 0.6); 
 }
 
 .profile-number {
@@ -189,10 +159,8 @@ fieldset {
     font-size: 120px;
     font-weight: 500;
     font-family: "Cinzel", sans-serif;
-    color: #a8d8e9; /* 文字の基本色 (画像に近い薄い水色) */
-    text-shadow: 
-        1px 1px 1px rgba(0, 0, 0, 0.4),      /* 右下の濃い影 */
-        -1px -1px 1px rgba(255, 255, 255, 0.6); /* 左上の明るい光 (ハイライト) */
+    color: #a8d8e9; 
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4), -1px -1px 1px rgba(255, 255, 255, 0.6); 
 }
 
 /* 画像切り取りモーダルのスタイル */
@@ -221,28 +189,22 @@ fieldset {
 
 /* --- スマホ表示用のスタイル --- */
 @media (max-width: 768px) {
-    /* コンテナを縦並びにする */
     .container {
         flex-direction: column;
         align-items: flex-start;
     }
-
     .settings, .preview {
         flex-basis: 100%;
         width: 100%;
     }
-    
     h1 {
         text-align: center;
     }
-
-    /* プレビューが画面に収まるように縮小する */
     .preview {
-        /* 横幅いっぱいに広げた上で、transformで中身を縮小 */
-        width: 1250px; /* カード幅＋α */
+        width: 1250px; 
         transform-origin: top left;
         transform: scale(calc(100vw / 1250px));
-        margin-bottom: calc(-500px * (1 - (100vw / 1250px))); /* 縮小によって生まれた下の余白を詰める */
+        margin-bottom: calc(-500px * (1 - (100vw / 1250px))); 
     }
 }
 
@@ -257,7 +219,7 @@ fieldset {
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    user-select: none; /* テキスト選択を防ぐ */
+    user-select: none; 
 }
 .stamp-option.mosaic {
     background: #888;
@@ -266,9 +228,8 @@ fieldset {
     filter: blur(5px);
 }
 .photo-container {
-    position: absolute; /* .photo1や.photo2と同じ位置・サイズに合わせる */
+    position: absolute; 
 }
-/* JavaScriptで写真コンテナの位置を合わせるため、CSSでの位置指定は削除しても良い */
 #photoContainer1 { top: 60px; right: 50px; width: 300px; height: 300px; }
 #photoContainer2 { top: 410px; right: 50px; width: 300px; height: 300px; }
 
@@ -276,21 +237,22 @@ fieldset {
 
 .stamp {
     position: absolute;
-    top: 50%; /* 中央に配置 */
+    top: 50%; 
     left: 50%;
-    font-size: 80px;
-    cursor: grab;
-    user-select: none;
-    touch-action: none;
-    width: 80px; /* 大きさを固定 */
-    height: 80px;
-    display: flex;
+    display: inline-flex;
     justify-content: center;
     align-items: center;
-    box-sizing: border-box; /* 枠線を含めて大きさを計算 */
+    width: 60px; 
+    height: 60px;
+    font-size: 50px; 
+    line-height: 1;
+    border: 2px solid transparent;
+    cursor: move;
+    user-select: none;
+    touch-action: none;
+    box-sizing: border-box;
 }
 
-/* 選択されたスタンプに青い破線の枠を表示 */
 .stamp:focus {
     outline: 2px dashed #007bff;
 }
@@ -300,42 +262,19 @@ fieldset {
     background: #888;
     filter: blur(8px);
 }
-
-/* --- スタンプと選択・リサイズハンドルのスタイル --- */
-.stamp {
-    position: absolute;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: 60px; /* 初期サイズ */
-    height: 60px;
-    font-size: 50px; /* 初期フォントサイズ */
-    line-height: 1;
-    border: 2px solid transparent;
-    cursor: move;
-    user-select: none;
-    touch-action: none;
-    box-sizing: border-box;
-}
-
-/* 選択された時の枠線 */
 .stamp.is-selected {
     border-color: #007bff;
     border-style: dashed;
-    background-color: rgba(255, 255, 255, 0.3); /* 少し背景を白くする */
+    background-color: rgba(255, 255, 255, 0.3); 
 }
-
-/* スタンプの中身（絵文字など） */
 .stamp-content {
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    pointer-events: none; /* ドラッグの邪魔にならないようにする */
+    pointer-events: none; 
 }
-
-/* 四隅のハンドル */
 .resize-handle {
     position: absolute;
     width: 16px;
@@ -343,29 +282,23 @@ fieldset {
     background-color: #fff;
     border: 2px solid #007bff;
     border-radius: 50%;
-    display: none; /* 普段は隠す */
+    display: none; 
 }
-
-/* 選択時にハンドルを表示 */
 .stamp.is-selected .resize-handle {
     display: block;
 }
-
-/* 各ハンドルの位置とカーソル */
 .resize-handle.tl { top: -10px; left: -10px; cursor: nwse-resize; }
 .resize-handle.tr { top: -10px; right: -10px; cursor: nesw-resize; }
 .resize-handle.bl { bottom: -10px; left: -10px; cursor: nesw-resize; }
 .resize-handle.br { bottom: -10px; right: -10px; cursor: nwse-resize; }
 
-/* --- スタンプ編集モード（拡大ポップアップ用）のスタイル --- */
 #stampOverlay {
     display: none; 
-    position: fixed; /* 画面全体を覆うようにfixedに戻す */
+    position: fixed; 
     top: 0; left: 0; width: 100vw; height: 100vh;
     background: rgba(0, 0, 0, 0.8);
     z-index: 9998;
 }
-
 #closeStampOverlay {
     display: none;
     position: fixed;
@@ -381,10 +314,8 @@ fieldset {
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0,0,0,0.5);
 }
-
-/* 拡大される写真コンテナ */
 .photo-container.is-editing-stamps {
-    position: fixed !important; /* 画面の中央にfixed */
+    position: fixed !important; 
     top: 50% !important;
     left: 50% !important;
     transform: translate(-50%, -50%) scale(2.5) !important; 
@@ -392,7 +323,6 @@ fieldset {
     box-shadow: 0 10px 30px rgba(0,0,0,0.8) !important;
     transition: transform 0.2s ease-out; 
 }
-
 @media (max-width: 600px) {
     .photo-container.is-editing-stamps {
         transform: translate(-50%, -50%) scale(1.5) !important; 
@@ -444,7 +374,6 @@ fieldset {
     gap: 20px;
 }
 
-/* ギャラリー内のカード */
 .gallery-item {
     position: relative;
     border: 1px solid #ddd;
@@ -460,7 +389,6 @@ fieldset {
     display: block;
 }
 
-/* 削除ボタン（自分のにだけ表示される） */
 .delete-btn {
     position: absolute;
     top: 5px;
