@@ -15,18 +15,13 @@ html, body {
 body {
     font-family: sans-serif;
     padding: 20px;
-    background-color: transparent !important; 
+    /* ▼ 宇宙の画像を復活 ▼ */
+    background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2048&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 }
 
-#starfield {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: -1; 
-    background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
-}
 
 /* ==========================================
    2. 各パネルとレイアウト
