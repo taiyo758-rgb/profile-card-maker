@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const birthOutput = document.getElementById('birthOutput');
     const gradeInput = document.getElementById('gradeInput');
     const gradeOutput = document.getElementById('gradeOutput');
+    const hometownInput = document.getElementById('hometownInput'); // ← 追加
+    const hometownOutput = document.getElementById('hometownOutput'); // ← 追加
     const stationInput = document.getElementById('stationInput');
     const stationOutput = document.getElementById('stationOutput');
     const jobInput = document.getElementById('jobInput');
@@ -77,7 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // テキスト入力のリアルタイム反映
     nameInput.addEventListener('input', () => nameOutput.textContent = "名前: " + (nameInput.value || ''));
-    birthInput.addEventListener('input', () => birthOutput.textContent = "生年月日: " + (birthInput.value || '未入力'));
+    hometownInput.addEventListener('input', () => hometownOutput.textContent = "出身地: " + (hometownInput.value || '未入力'));
+    birthInput.addEventListener('input', () => birthOutput.textContent = "誕生日: " + (birthInput.value || '未入力'));
     gradeInput.addEventListener('input', () => gradeOutput.textContent = "学部学年: " + (gradeInput.value || '未入力'));
     stationInput.addEventListener('input', () => stationOutput.textContent = "最寄駅: " + (stationInput.value || '未入力'));
     jobInput.addEventListener('input', () => jobOutput.textContent = "バイト先: " + (jobInput.value || '未入力'));
@@ -413,6 +416,8 @@ uploadBtn.addEventListener('click', () => {
     // 検索ワードの結合
     const searchText = `
         ${document.getElementById('nameInput').value} 
+        ${document.getElementById('gradeInput').value}
+        ${document.getElementById('hometownInput').value}
         ${document.getElementById('mbtiInput').value} 
         ${document.getElementById('jobInput').value} 
         ${document.getElementById('clubInput').value} 
