@@ -208,24 +208,42 @@ button:hover {
     max-height: 70vh;
 }
 
-/* --- スマホ表示用のスタイル --- */
+/* ==========================================
+   --- スマホ表示用のスタイル（横揺れ・見切れ防止） ---
+   ========================================== */
+
+/* 画面全体の横揺れ（水平スクロール）を完全に禁止する魔法 */
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+}
+
 @media (max-width: 768px) {
     .container {
         flex-direction: column;
         align-items: flex-start;
     }
-    .settings, .preview {
+    .settings {
         flex-basis: 100%;
         width: 100%;
+        box-sizing: border-box; /* はみ出し防止 */
     }
     h1 {
         text-align: center;
+        font-size: 24px; /* スマホ用に少しタイトルを小さく */
     }
+    
+    /* プレビュー画面をスマホ幅にピッタリ合わせる */
     .preview {
         width: 1250px; 
+        max-width: none;
         transform-origin: top left;
-        transform: scale(calc(100vw / 1250px));
-        margin-bottom: calc(-500px * (1 - (100vw / 1250px))); 
+        /* 画面幅(100vw)から、左右の余白(約60px)を引いて綺麗に収める */
+        -webkit-transform: scale(calc((100vw - 60px) / 1250));
+        transform: scale(calc((100vw - 60px) / 1250));
+        
+        /* 縮小した分、下の空白をガッツリ詰める（カードの高さ約850px基準） */
+        margin-bottom: calc(-850px * (1 - ((100vw - 60px) / 1250))); 
     }
 }
 
