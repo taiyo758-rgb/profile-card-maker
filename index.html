@@ -10,12 +10,9 @@
 
     <script>
         var ua = navigator.userAgent || navigator.vendor || window.opera;
-        // ユーザー環境がLINEであり、かつURLに openExternalBrowser=1 が含まれていない場合
         if ((ua.indexOf("Line") > -1) && (window.location.search.indexOf("openExternalBrowser=1") === -1)) {
             var url = new URL(window.location.href);
-            // LINE専用の外部ブラウザ起動パラメータを追加
             url.searchParams.append('openExternalBrowser', '1');
-            // パラメータ付きのURLに移動（これで自動的にSafariやChromeが開きます）
             window.location.href = url.toString();
         }
     </script>
@@ -32,14 +29,14 @@
     <div class="container">
         <div class="settings">
             <h2>カードの設定</h2>
-        
+         
             <div class="tab-buttons">
                 <button class="tab-btn active" data-tab="tab-bg">背景</button>
                 <button class="tab-btn" data-tab="tab-photos">写真</button>
                 <button class="tab-btn" data-tab="tab-text">内容入力</button>
                 <button class="tab-btn" data-tab="tab-stamps">スタンプ</button>
             </div>
-        
+         
             <div class="tab-contents">
                 <div id="tab-bg" class="tab-content active">
                     <fieldset>
@@ -49,7 +46,7 @@
                         <label><input type="radio" name="bg" value="images/bg3.jpg"> 背景3</label>
                     </fieldset>
                 </div>
-        
+         
                 <div id="tab-photos" class="tab-content">
                     <fieldset>
                         <legend>2. 写真をアップロード</legend>
@@ -57,7 +54,7 @@
                         <p>写真2 (右下): <input type="file" id="imageUpload2" accept="image/*"></p>
                     </fieldset>
                 </div>
-        
+         
                 <div id="tab-text" class="tab-content">
                     <fieldset>
                         <legend>3. 内容を入力</legend>
@@ -89,18 +86,16 @@
                         </p>
                         <p>一言コメント: <textarea id="commentInput" rows="3" placeholder="よろしくお願いします！"></textarea></p>
                     </fieldset>
-                </div> <div id="tab-stamps" class="tab-content">
+                </div> 
+                
+                <div id="tab-stamps" class="tab-content">
                     <fieldset>
                         <legend>4. スタンプを追加</legend>
                         <p>スタンプを追加する写真を選択:</p>
-
-                        <div class="stamp-target-selector">
-
-                            <label><input type="radio" name="stampTarget" value="photoContainer1" checked> 写真1</label>
-
-                            <label><input type="radio" name="stampTarget" value="photoContainer2"> 写真2</label>
-
-                        </div>
+                        <div class="stamp-target-selector">
+                            <label><input type="radio" name="stampTarget" value="photoContainer1" checked> 写真1</label>
+                            <label><input type="radio" name="stampTarget" value="photoContainer2"> 写真2</label>
+                        </div>
                         <p>クリックして追加(他の人の顔隠すのに使ってね) (ダブルクリックで削除):</p>
                         <div class="stamp-selector">
                             <div class="stamp-option">😊</div>
@@ -111,7 +106,8 @@
                     </fieldset>
                 </div>
             </div>
-            <button id="downloadBtn">サイトにアップロードして共有</button>
+            
+            <button id="uploadBtn" class="upload-btn">サイトにアップロードして共有</button>
         </div>
 
         <div class="preview">
@@ -120,16 +116,16 @@
                 <img src="images/my-logo.png" class="fixed-logo-image" alt="固定ロゴ">
                 <div class="profile-title">PROFILE</div>
                 <div class="profile-number" id="numberOutput">46</div>
-            
+             
                 <div class="photo-container" id="photoContainer1">
                     <img id="photo1" class="photo-area photo1" src="https://via.placeholder.com/300.png?text=Photo1" alt="写真1">
                 </div>
                 <div class="photo-container" id="photoContainer2">
                     <img id="photo2" class="photo-area photo2" src="https://via.placeholder.com/300.png?text=Photo2" alt="写真2">
                 </div>
-            
+             
                 <img src="" id="signImage" class="sign-image-area" alt="星座の画像">
-            
+             
                 <div class="text-area name" id="nameOutput">名前</div>
                 <div class="text-area grade" id="gradeOutput">学部学年</div>
                 <div class="text-area hometown" id="hometownOutput">出身地</div>
@@ -145,30 +141,28 @@
     </div>
 
     <div class="gallery-section">
-            <h2>みんなの自己紹介カード（プレビュー版）</h2>
-            
-            <div class="gallery-controls">
-                <input type="text" id="searchInput" class="search-input" placeholder="🔍 「ENFJ」「カフェ」「テニス」などで検索...">
-                
-                <div class="filter-container">
-                    <span>代数フィルター:</span>
-                    <select id="galleryFilterSelect">
-                        <option value="all">すべて表示</option>
-                        </select>
-                </div>
+        <h2>みんなの自己紹介カード（プレビュー版）</h2>
+        <div class="gallery-controls">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 「ENFJ」「カフェ」「テニス」などで検索...">
+            <div class="filter-container">
+                <span>代数フィルター:</span>
+                <select id="galleryFilterSelect">
+                    <option value="all">すべて表示</option>
+                </select>
             </div>
-
-            <div id="galleryGrid" class="gallery-grid">
-                </div>
         </div>
-    
+        <div id="galleryGrid" class="gallery-grid"></div>
+    </div>
 
+    <div class="admin-section" style="margin-top: 50px; margin-bottom: 50px; text-align: center; padding: 20px; border: 2px dashed #ccc; border-radius: 8px;">
+        <p style="color: #d9534f; font-weight: bold; font-size: 16px; margin-bottom: 10px;">⚠️ 触っても大丈夫だけど触らないで！</p>
+        <button id="adminDownloadBtn" style="background-color: #6c757d; color: white;">🤫 管理者専用：全カード一括ダウンロード</button>
+    </div>
+    
     <div id="cropModal" class="modal">
         <div class="modal-content">
             <h2>画像を切り取る</h2>
-            <div>
-                <img id="imageToCrop" src="" alt="切り取り対象">
-            </div>
+            <div><img id="imageToCrop" src="" alt="切り取り対象"></div>
             <button id="cropBtn">この範囲で切り取る</button>
         </div>
     </div>
