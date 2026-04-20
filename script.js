@@ -392,3 +392,25 @@ stampOptions.forEach(option => {
         makeInteractable(newStamp);
     });
 });
+
+// ▼▼▼ 拡大編集用の画面（オーバーレイ）と完了ボタンを作成 ▼▼▼
+const overlay = document.createElement('div');
+overlay.id = 'stampOverlay';
+document.body.appendChild(overlay);
+
+const closeBtn = document.createElement('button');
+closeBtn.id = 'closeStampOverlay';
+closeBtn.textContent = '完了';
+document.body.appendChild(closeBtn);
+
+// 「完了」ボタンを押した時の処理（拡大モードを終了して元に戻す）
+closeBtn.addEventListener('click', () => {
+    document.querySelectorAll('.photo-container').forEach(container => {
+        container.classList.remove('is-editing-stamps');
+    });
+    overlay.style.display = 'none';
+    closeBtn.style.display = 'none';
+    
+    // 選択枠もついでに消す
+    document.querySelectorAll('.stamp').forEach(s => s.classList.remove('is-selected'));
+});
