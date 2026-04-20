@@ -353,3 +353,51 @@ fieldset {
 .resize-handle.tr { top: -10px; right: -10px; cursor: nesw-resize; }
 .resize-handle.bl { bottom: -10px; left: -10px; cursor: nesw-resize; }
 .resize-handle.br { bottom: -10px; right: -10px; cursor: nwse-resize; }
+
+/* --- スタンプ編集モード（拡大ポップアップ用）のスタイル --- */
+#stampOverlay {
+    display: none; 
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 9998;
+}
+
+#closeStampOverlay {
+    display: none;
+    position: fixed;
+    top: 20px; right: 20px;
+    z-index: 10000;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+#closeStampOverlay:hover {
+    background-color: #218838;
+}
+
+/* 拡大される写真コンテナ */
+.photo-container.is-editing-stamps {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    /* 画面中央に表示し、2.5倍に拡大 */
+    transform: translate(-50%, -50%) scale(2.5) !important; 
+    z-index: 9999 !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8) !important;
+    transition: transform 0.2s ease-out; /* ふわっと拡大するアニメーション */
+}
+
+/* スマホの時は拡大率を少し下げる（画面からはみ出さないため） */
+@media (max-width: 600px) {
+    .photo-container.is-editing-stamps {
+        transform: translate(-50%, -50%) scale(1.5) !important; 
+    }
+}
