@@ -26,7 +26,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <canvas id="starfield"></canvas>
     <h1>WASA天文自己紹介カードメーカー</h1>
 
     <div class="container">
@@ -178,73 +177,5 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
     <script src="script.js"></script>
-
-    <script>
-    (function() {
-        const canvas = document.getElementById('starfield');
-        const ctx = canvas.getContext('2d');
-
-        let width, height, stars = [];
-        
-        // 設定：星の数と速度
-        const numStars = 200; 
-        const speed = 0.05; // 小さいほどゆっくり
-
-        // 画面サイズに合わせる関数
-        function setCanvasSize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-
-        // 星を初期化する関数
-        function initStars() {
-            stars = [];
-            for (let i = 0; i < numStars; i++) {
-                stars.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    size: Math.random() * 1.5, // 星の大きさ
-                    // わずかに色をつける（白、薄い青、薄い黄色）
-                    color: `hsla(${Math.random() * 360}, 30%, 90%, ${Math.random() * 0.8 + 0.2})`
-                });
-            }
-        }
-
-        // 描画とアニメーションのループ関数
-        function animate() {
-            // キャンバスをクリア（少し残像を残して滑らかにする）
-            ctx.clearRect(0, 0, width, height);
-
-            stars.forEach(star => {
-                // 星を描画
-                ctx.fillStyle = star.color;
-                ctx.beginPath();
-                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-                ctx.fill();
-
-                // 星を横に移動（ドリフト）
-                star.x -= speed * (star.size); // 大きい星ほど速く動く（立体感）
-
-                // 画面左端に出たら右端に戻す
-                if (star.x < -star.size) {
-                    star.x = width + star.size;
-                    star.y = Math.random() * height;
-                }
-            });
-
-            requestAnimationFrame(animate);
-        }
-
-        // 起動時の処理
-        window.addEventListener('resize', () => {
-            setCanvasSize();
-            initStars();
-        });
-
-        setCanvasSize();
-        initStars();
-        animate();
-    })();
-    </script>
 </body>
 </html>
