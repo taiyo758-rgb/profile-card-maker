@@ -427,3 +427,56 @@ button:hover {
     align-items: center;
 }
 .delete-btn:hover { background: red; }
+
+/* ==========================================
+   --- アニメーションの追加（ここから下を追記） ---
+   ========================================== */
+
+/* 1. ページ読み込み時に下からフワッと浮かび上がるアニメーション */
+@keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* 各パネルの表示タイミングを少しずつズラしてリッチに */
+.settings { animation: fadeInUp 0.6s ease-out forwards; }
+.preview { animation: fadeInUp 0.6s ease-out 0.15s forwards; opacity: 0; }
+.gallery-section { animation: fadeInUp 0.6s ease-out 0.3s forwards; opacity: 0; }
+.admin-section { animation: fadeInUp 0.6s ease-out 0.45s forwards; opacity: 0; }
+
+/* 2. ボタンにカーソルを合わせたときの「浮き上がる」アニメーション */
+button {
+    transition: all 0.3s ease !important; /* 動きを滑らかにする魔法 */
+}
+button:hover {
+    transform: translateY(-2px); /* 2px上に浮く */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3); /* 影を濃くする */
+}
+button:active {
+    transform: translateY(1px); /* クリックした瞬間に沈み込む */
+}
+
+/* 緑色のアップロードボタンは特に目立たせる */
+.upload-btn:hover {
+    transform: translateY(-3px) scale(1.02); /* 少しだけ拡大 */
+    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
+}
+
+/* 3. ギャラリーのカードにカーソルを合わせたときの拡大アニメーション */
+.gallery-item {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.gallery-item:hover {
+    transform: translateY(-5px) scale(1.03); /* 少し手前に迫ってくる */
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+    z-index: 2; /* 拡大されたときに他の画像の下に隠れないようにする */
+}
+
+/* 4. タブを切り替えたときのフワッと切り替わるアニメーション */
+@keyframes fadeInTab {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.tab-content.active {
+    animation: fadeInTab 0.3s ease-out forwards;
+}
