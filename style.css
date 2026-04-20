@@ -210,22 +210,40 @@ button:hover {
 
 /* --- スマホ表示用のスタイル --- */
 @media (max-width: 768px) {
+    /* ▼ はみ出し（横揺れ・縮小バグ）を完全に防ぐ魔法 ▼ */
+    html, body {
+        overflow-x: hidden; 
+        width: 100%;
+    }
+    body {
+        margin: 10px; /* スマホでは全体の余白を少し小さくして画面を広く使う */
+    }
+
     .container {
         flex-direction: column;
         align-items: flex-start;
+        width: 100%;
     }
+
     .settings, .preview {
         flex-basis: 100%;
         width: 100%;
+        box-sizing: border-box; /* 余白を含めて幅100%にする */
     }
+    
     h1 {
         text-align: center;
+        font-size: 24px; /* タイトルをスマホサイズに微調整 */
     }
+
+    /* プレビューが画面幅に1ミリのズレもなくピッタリ収まるように計算 */
     .preview {
         width: 1250px; 
         transform-origin: top left;
-        transform: scale(calc(100vw / 1250px));
-        margin-bottom: calc(-500px * (1 - (100vw / 1250px))); 
+        /* スマホの画面幅（100vw）から、左右の余白（10px+10px=20px）を引いた幅で計算 */
+        transform: scale(calc((100vw - 20px) / 1250)); 
+        /* 縮小によって生まれた下の見えない余白をキッチリ詰める */
+        margin-bottom: calc(-750px * (1 - ((100vw - 20px) / 1250))); 
     }
 }
 
