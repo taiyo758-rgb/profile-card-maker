@@ -1,3 +1,10 @@
+/* ==========================================
+   --- 見切れを完全に防ぐ魔法（一番上に追加） ---
+   ========================================== */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 /* 全体のスタイル */
 body {
     font-family: sans-serif;
@@ -209,41 +216,49 @@ button:hover {
 }
 
 /* ==========================================
-   --- スマホ表示用のスタイル（横揺れ・見切れ防止） ---
+   --- スマホ表示用のスタイル（見切れ防止・完全版） ---
    ========================================== */
-
-/* 画面全体の横揺れ（水平スクロール）を完全に禁止する魔法 */
 html, body {
     overflow-x: hidden;
     width: 100%;
 }
 
 @media (max-width: 768px) {
+    body {
+        margin: 10px; /* スマホでは外側の余白を少し狭くして画面を広く使う */
+    }
     .container {
         flex-direction: column;
         align-items: flex-start;
     }
-    .settings {
+    
+    /* 各パネルが画面幅をはみ出さないようにする */
+    .settings, .preview, .gallery-section, .admin-section {
         flex-basis: 100%;
         width: 100%;
-        box-sizing: border-box; /* はみ出し防止 */
-    }
-    h1 {
-        text-align: center;
-        font-size: 24px; /* スマホ用に少しタイトルを小さく */
+        padding: 15px; /* スマホでは内側の余白も少し狭くする */
     }
     
-    /* プレビュー画面をスマホ幅にピッタリ合わせる */
+    h1 {
+        font-size: 24px;
+    }
+    
+    /* プレビュー画面全体の変な縮小を解除 */
     .preview {
-        width: 1250px; 
-        max-width: none;
+        -webkit-transform: none !important;
+        transform: none !important;
+        margin-bottom: 0 !important;
+        width: 100%;
+    }
+    
+    /* カード（画像）本体だけを画面の幅に合わせて綺麗に縮小する */
+    #card {
         transform-origin: top left;
-        /* 画面幅(100vw)から、左右の余白(約60px)を引いて綺麗に収める */
-        -webkit-transform: scale(calc((100vw - 60px) / 1250));
-        transform: scale(calc((100vw - 60px) / 1250));
-        
-        /* 縮小した分、下の空白をガッツリ詰める（カードの高さ約850px基準） */
-        margin-bottom: calc(-850px * (1 - ((100vw - 60px) / 1250))); 
+        /* スマホの画面幅(100vw)から左右の余白(計50px)を引いて、カード幅(1200)で割る */
+        -webkit-transform: scale(calc((100vw - 50px) / 1200));
+        transform: scale(calc((100vw - 50px) / 1200));
+        /* 縮小した分、カードの下にできる巨大な空白をマイナスして詰める */
+        margin-bottom: calc(750px * ((100vw - 50px) / 1200) - 750px);
     }
 }
 
