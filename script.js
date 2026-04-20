@@ -181,26 +181,26 @@ tabButtons.forEach(button => {
 // --- 拡大編集用の画面（オーバーレイ）と完了ボタンを作成 ---
 const overlay = document.createElement('div');
 overlay.id = 'stampOverlay';
-// 【修正】bodyではなくcardの中に入れることで、スマホでの重なり順エラーを回避！
-document.getElementById('card').appendChild(overlay);
+document.body.appendChild(overlay); // body直下に配置
 
 const closeBtn = document.createElement('button');
 closeBtn.id = 'closeStampOverlay';
 closeBtn.textContent = '完了';
-document.body.appendChild(closeBtn);
+document.body.appendChild(closeBtn); // body直下に配置
 
 // 「完了」ボタンを押した時の処理
 closeBtn.addEventListener('click', () => {
-    document.querySelectorAll('.photo-container').forEach(container => {
+    const cardElement = document.getElementById('card');
+    const signImage = document.getElementById('signImage'); // 元に戻す位置の目印
+
+    document.querySelectorAll('.photo-container.is-editing-stamps').forEach(container => {
         container.classList.remove('is-editing-stamps');
+        // 【重要】編集が終わったら、元のカードの中（星座画像の前）に戻す
+        cardElement.insertBefore(container, signImage);
     });
+    
     overlay.style.display = 'none';
     closeBtn.style.display = 'none';
-    
-    // カードのはみ出し非表示設定を元に戻す
-    document.getElementById('card').style.overflow = 'hidden';
-    
-    // 選択枠もついでに消す
     document.querySelectorAll('.stamp').forEach(s => s.classList.remove('is-selected'));
 });
 
@@ -236,12 +236,12 @@ stampOptions.forEach(option => {
         document.querySelectorAll('.stamp').forEach(s => s.classList.remove('is-selected'));
         newStamp.classList.add('is-selected');
 
-        // 写真のみを拡大表示するモードに切り替え
+        // 【重要】編集中だけ、写真をカードの外（body直下）に移動させて画面中央に表示！
+        document.body.appendChild(targetContainer);
         targetContainer.classList.add('is-editing-stamps');
+        
         document.getElementById('stampOverlay').style.display = 'block';
         document.getElementById('closeStampOverlay').style.display = 'block';
-        
-        // 【追加】拡大時に写真がカードの枠で見切れないようにする
         document.getElementById('card').style.overflow = 'visible';
     });
 });
