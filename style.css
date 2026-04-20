@@ -1,53 +1,71 @@
 /* ==========================================
-   --- 見切れを完全に防ぐ魔法（一番上に追加） ---
+   1. 全体の基本設定（見切れ防止の魔法を含む）
    ========================================== */
 *, *::before, *::after {
-    box-sizing: border-box;
+    box-sizing: border-box !important; /* ←これがはみ出しを防止する最強の魔法です */
 }
 
-/* 全体のスタイル */
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     font-family: sans-serif;
-    margin: 20px;
-    /* ▼ 変更：美しい宇宙のフリー画像を背景に設定 ▼ */
-    background-image: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2048&auto=format&fit=crop');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed; /* スクロールしても星空を固定 */
+    padding: 20px;
+    background-color: transparent !important; 
 }
 
-/* タイトルを白文字にして宇宙に映えるように */
+#starfield {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1; 
+    background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+}
+
+/* ==========================================
+   2. 各パネルとレイアウト
+   ========================================== */
 h1 {
+    text-align: center;
     color: white;
     text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
-    text-align: center;
     margin-bottom: 30px;
-}
-
-/* 各エリアを「すりガラス風」にして文字を読みやすくする */
-.settings, .preview, .gallery-section, .admin-section {
-    background-color: rgba(255, 255, 255, 0.85); /* 85%の透けた白 */
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); /* ふんわりとした影 */
 }
 
 .container {
     display: flex;
     gap: 30px;
-    align-items: flex-start; /* 上揃え */
+    align-items: flex-start;
+    max-width: 100%;
 }
-.settings {
-    flex-basis: 30%;
+
+.settings, .preview, .gallery-section, .admin-section {
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    max-width: 100%;
 }
-.preview {
-    flex-basis: 70%;
-}
+
+.settings { flex-basis: 30%; }
+.preview { flex-basis: 70%; overflow: hidden; }
+
 fieldset {
     border: none;
     margin-bottom: 0;
 }
+
 input[type="text"], textarea, select { width: 90%; padding: 5px; }
+
+/* ==========================================
+   3. ボタンとタブ
+   ========================================== */
 button {
     padding: 10px 20px;
     background-color: #007bff;
@@ -55,93 +73,77 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    -webkit-transition: all 0.3s ease !important;
+    transition: all 0.3s ease !important; 
 }
 button:hover {
     background-color: #0056b3;
+    -webkit-transform: translateY(-2px);
+    transform: translateY(-2px); 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
+}
+button:active {
+    -webkit-transform: translateY(1px);
+    transform: translateY(1px); 
 }
 
-/* --- タブ機能のスタイル --- */
-.tab-buttons {
-    display: flex;
-    margin-bottom: 10px;
+.upload-btn {
+    background-color: #28a745;
+    margin-top: 10px;
+    width: 100%;
 }
+.upload-btn:hover {
+    background-color: #218838;
+    -webkit-transform: translateY(-3px) scale(1.02);
+    transform: translateY(-3px) scale(1.02); 
+    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
+}
+
+.tab-buttons { display: flex; margin-bottom: 10px; }
 .tab-btn {
-    flex: 1;
-    padding: 10px;
-    cursor: pointer;
-    border: 1px solid #ccc;
-    background-color: #007bff;
-    color: white;
-    border-radius: 5px 5px 0 0;
-    margin-right: -1px;
+    flex: 1; padding: 10px; cursor: pointer;
+    border: 1px solid #ccc; background-color: #007bff;
+    color: white; border-radius: 5px 5px 0 0; margin-right: -1px;
 }
 .tab-btn.active {
-    background-color: #0056b3; 
-    border-bottom: 1px solid #0056b3; 
-    color: white; 
+    background-color: #0056b3; border-bottom: 1px solid #0056b3; 
 }
 .tab-content {
-    display: none; 
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 0 5px 5px 5px;
-    background-color: white;
+    display: none; padding: 20px; border: 1px solid #ccc;
+    border-radius: 0 5px 5px 5px; background-color: white;
 }
 .tab-content.active {
     display: block; 
 }
 
-/* カードのスタイル */
+/* ==========================================
+   4. カード（プレビュー）本体のデザイン
+   ========================================== */
 #card {
-    width: 1200px;
-    height: 750px;
-    border: 1px solid #333;
-    position: relative;
-    background-size: cover;
-    background-position: center;
+    width: 1200px; height: 750px;
+    border: 1px solid #333; position: relative;
+    background-size: cover; background-position: center;
     background-image: url('images/bg1.jpg');
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     font-family: 'Noto Sans JP', sans-serif; 
 }
-/* 写真エリアのスタイル */
-.photo-area {
-    position: absolute;
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-    border-radius: 10px;
-}
-.photo-area img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
 
-.photo1, .photo2 {
-    width: 100%;
-    height: 100%;
+.photo-area {
+    position: absolute; background-color: rgba(255, 255, 255, 0.1);
+    padding: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.4); border-radius: 10px;
 }
+.photo-area img { width: 100%; height: 100%; object-fit: cover; }
+.photo1, .photo2 { width: 100%; height: 100%; }
 
 .sign-image-area {
-    position: absolute;
-    top: 450px;
-    right: 380px;
-    width: 250px;
-    height: 250px;
-    object-fit: contain;
-    display: none !important; 
+    position: absolute; top: 450px; right: 380px;
+    width: 250px; height: 250px; object-fit: contain; display: none !important; 
 }
 
-/* --- 各テキストの位置・サイズ調整 --- */
 .text-area {
-    position: absolute;
-    background-color: transparent;
-    padding: 5px 10px;
-    color: white;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+    position: absolute; background-color: transparent;
+    padding: 5px 10px; color: white; text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
 }
-
 .name { top: 280px; left: 60px; font-size: 24px; }
 .grade { top: 320px; left: 60px; font-size: 24px; }
 .hometown { top: 360px; left: 60px; font-size: 24px; }
@@ -151,365 +153,170 @@ button:hover {
 .mbti { top: 520px; left: 60px; font-size: 24px; }
 .club { top: 560px; left: 60px; font-size: 24px; }
 .sign { top: 600px; left: 60px; font-size: 24px; }
-.comment { 
-    top: 640px; 
-    left: 60px; 
-    width: 650px; 
-    font-size: 24px; 
-    line-height: 1.4; 
-}
+.comment { top: 640px; left: 60px; width: 650px; font-size: 24px; line-height: 1.4; }
 
-/* 固定ロゴ画像のスタイル */
 .fixed-logo-image {
-    position: absolute;
-    top: 50px;
-    left: 50px;
-    width: 230px;
-    height: 230px;
-    border-radius: 50%; 
+    position: absolute; top: 50px; left: 50px;
+    width: 230px; height: 230px; border-radius: 50%; 
 }
 
 .profile-title {
-    position: absolute;
-    top: 40px;
-    left: 310px;
-    font-size: 120px;
-    font-weight: 500;
-    font-family: "Cinzel", serif; 
-    color: #a8d8e9; 
+    position: absolute; top: 40px; left: 310px; font-size: 120px; font-weight: 500;
+    font-family: "Cinzel", serif; color: #a8d8e9; 
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4), -1px -1px 1px rgba(255, 255, 255, 0.6); 
 }
 
 .profile-number {
-    position: absolute;
-    top: 140px;
-    left: 470px;
-    font-size: 120px;
-    font-weight: 500;
-    font-family: "Cinzel", sans-serif;
-    color: #a8d8e9; 
+    position: absolute; top: 140px; left: 470px; font-size: 120px; font-weight: 500;
+    font-family: "Cinzel", sans-serif; color: #a8d8e9; 
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4), -1px -1px 1px rgba(255, 255, 255, 0.6); 
 }
 
-/* 画像切り取りモーダルのスタイル */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    justify-content: center;
-    align-items: center;
+/* ==========================================
+   5. ギャラリー機能
+   ========================================== */
+.gallery-section { margin-top: 40px; padding: 20px; }
+.gallery-controls { display: flex; gap: 15px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; }
+.search-input { flex: 2; padding: 10px; font-size: 16px; border: 2px solid #007bff; border-radius: 5px; }
+.filter-container { flex: 1; display: flex; align-items: center; gap: 10px; }
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+
+.gallery-item {
+    position: relative; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;
+    background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    -webkit-transition: -webkit-transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.modal-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    text-align: center;
+.gallery-item img { width: 100%; height: auto; display: block; }
+.gallery-item:hover {
+    -webkit-transform: translateY(-5px) scale(1.03); transform: translateY(-5px) scale(1.03); 
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4); z-index: 2; 
 }
-#imageToCrop {
-    max-width: 80vw;
-    max-height: 70vh;
+
+.delete-btn {
+    position: absolute; top: 5px; right: 5px; background: rgba(255, 0, 0, 0.8);
+    color: white; border: none; border-radius: 50%; width: 30px; height: 30px;
+    font-size: 16px; cursor: pointer; display: flex; justify-content: center; align-items: center;
 }
+.delete-btn:hover { background: red; }
 
 /* ==========================================
-   --- スマホ表示用のスタイル（見切れ防止・完全版） ---
+   6. モーダルとスタンプ機能
    ========================================== */
-html, body {
-    overflow-x: hidden;
-    width: 100%;
+.modal {
+    display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+    width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);
+    justify-content: center; align-items: center;
 }
+.modal-content { background-color: #fff; padding: 20px; border-radius: 5px; text-align: center; }
+#imageToCrop { max-width: 80vw; max-height: 70vh; }
 
-@media (max-width: 768px) {
-    body {
-        margin: 10px; /* スマホでは外側の余白を少し狭くして画面を広く使う */
-    }
-    .container {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    /* 各パネルが画面幅をはみ出さないようにする */
-    .settings, .preview, .gallery-section, .admin-section {
-        flex-basis: 100%;
-        width: 100%;
-        padding: 15px; /* スマホでは内側の余白も少し狭くする */
-    }
-    
-    h1 {
-        font-size: 24px;
-    }
-    
-    /* プレビュー画面全体の変な縮小を解除 */
-    .preview {
-        -webkit-transform: none !important;
-        transform: none !important;
-        margin-bottom: 0 !important;
-        width: 100%;
-    }
-    
-    /* カード（画像）本体だけを画面の幅に合わせて綺麗に縮小する */
-    #card {
-        transform-origin: top left;
-        /* スマホの画面幅(100vw)から左右の余白(計50px)を引いて、カード幅(1200)で割る */
-        -webkit-transform: scale(calc((100vw - 50px) / 1200));
-        transform: scale(calc((100vw - 50px) / 1200));
-        /* 縮小した分、カードの下にできる巨大な空白をマイナスして詰める */
-        margin-bottom: calc(750px * ((100vw - 50px) / 1200) - 750px);
-    }
-}
-
-/* --- スタンプ機能のスタイル --- */
-.stamp-selector {
-    display: flex;
-    gap: 10px;
-    cursor: pointer;
-}
-.stamp-option {
-    font-size: 40px;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    user-select: none; 
-}
-.stamp-option.mosaic {
-    background: #888;
-    color: #888;
-    font-size: 20px;
-    filter: blur(5px);
-}
-.photo-container {
-    position: absolute; 
-}
+.stamp-selector { display: flex; gap: 10px; cursor: pointer; }
+.stamp-option { font-size: 40px; padding: 5px; border: 1px solid #ccc; border-radius: 5px; user-select: none; }
+.stamp-option.mosaic { background: #888; color: #888; font-size: 20px; filter: blur(5px); }
+.photo-container { position: absolute; }
 #photoContainer1 { top: 60px; right: 50px; width: 300px; height: 300px; }
 #photoContainer2 { top: 410px; right: 50px; width: 300px; height: 300px; }
-
 .stamp-target-selector label { margin-right: 15px; }
 
 .stamp {
-    position: absolute;
-    top: 50%; 
-    left: 50%;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: 60px; 
-    height: 60px;
-    font-size: 50px; 
-    line-height: 1;
-    border: 2px solid transparent;
-    cursor: move;
-    user-select: none;
-    touch-action: none;
-    box-sizing: border-box;
+    position: absolute; top: 50%; left: 50%; display: inline-flex; justify-content: center;
+    align-items: center; width: 60px; height: 60px; font-size: 50px; line-height: 1;
+    border: 2px solid transparent; cursor: move; user-select: none; touch-action: none;
 }
+.stamp:focus { outline: 2px dashed #007bff; }
+.stamp.mosaic { width: 50px; height: 50px; background: #888; filter: blur(8px); }
+.stamp.is-selected { border-color: #007bff; border-style: dashed; background-color: rgba(255, 255, 255, 0.3); }
+.stamp-content { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; pointer-events: none; }
 
-.stamp:focus {
-    outline: 2px dashed #007bff;
-}
-.stamp.mosaic {
-    width: 50px;
-    height: 50px;
-    background: #888;
-    filter: blur(8px);
-}
-.stamp.is-selected {
-    border-color: #007bff;
-    border-style: dashed;
-    background-color: rgba(255, 255, 255, 0.3); 
-}
-.stamp-content {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    pointer-events: none; 
-}
 .resize-handle {
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    background-color: #fff;
-    border: 2px solid #007bff;
-    border-radius: 50%;
-    display: none; 
+    position: absolute; width: 16px; height: 16px; background-color: #fff;
+    border: 2px solid #007bff; border-radius: 50%; display: none; 
 }
-.stamp.is-selected .resize-handle {
-    display: block;
-}
+.stamp.is-selected .resize-handle { display: block; }
 .resize-handle.tl { top: -10px; left: -10px; cursor: nwse-resize; }
 .resize-handle.tr { top: -10px; right: -10px; cursor: nesw-resize; }
 .resize-handle.bl { bottom: -10px; left: -10px; cursor: nesw-resize; }
 .resize-handle.br { bottom: -10px; right: -10px; cursor: nwse-resize; }
 
 #stampOverlay {
-    display: none; 
-    position: fixed; 
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    background: rgba(0, 0, 0, 0.8);
-    z-index: 9998;
+    display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.8); z-index: 9998;
 }
 #closeStampOverlay {
-    display: none;
-    position: fixed;
-    top: 20px; right: 20px;
-    z-index: 10000;
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    display: none; position: fixed; top: 20px; right: 20px; z-index: 10000;
+    padding: 10px 20px; font-size: 16px; font-weight: bold; background-color: #28a745;
+    color: white; border: none; border-radius: 5px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
 }
 .photo-container.is-editing-stamps {
-    position: fixed !important; 
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) scale(2.5) !important; 
-    z-index: 9999 !important;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.8) !important;
-    transition: transform 0.2s ease-out; 
+    position: fixed !important; top: 50% !important; left: 50% !important;
+    transform: translate(-50%, -50%) scale(2.5) !important; z-index: 9999 !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8) !important; transition: transform 0.2s ease-out; 
 }
-@media (max-width: 600px) {
-    .photo-container.is-editing-stamps {
-        transform: translate(-50%, -50%) scale(1.5) !important; 
-    }
-}
-
-/* --- ギャラリー・検索セクションのスタイル --- */
-.upload-btn {
-    background-color: #28a745;
-    margin-top: 10px;
-    width: 100%;
-}
-.upload-btn:hover { background-color: #218838; }
-
-.gallery-section {
-    flex-basis: 100%;
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 2px dashed #ccc;
-    width: 100%;
-}
-
-.gallery-controls {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.search-input {
-    flex: 2;
-    padding: 10px;
-    font-size: 16px;
-    border: 2px solid #007bff;
-    border-radius: 5px;
-}
-
-.filter-container {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-}
-
-.gallery-item {
-    position: relative;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-    background: #fff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.gallery-item img {
-    width: 100%;
-    height: auto;
-    display: block;
-}
-
-.delete-btn {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: rgba(255, 0, 0, 0.8);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    font-size: 16px;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.delete-btn:hover { background: red; }
 
 /* ==========================================
-   --- アニメーションの追加（ここから下を追記） ---
+   7. アニメーションキーフレーム
    ========================================== */
-
-/* 1. ページ読み込み時に下からフワッと浮かび上がるアニメーション */
+@-webkit-keyframes fadeInUp {
+    0% { opacity: 0; -webkit-transform: translateY(20px); transform: translateY(20px); }
+    100% { opacity: 1; -webkit-transform: translateY(0); transform: translateY(0); }
+}
 @keyframes fadeInUp {
     0% { opacity: 0; transform: translateY(20px); }
     100% { opacity: 1; transform: translateY(0); }
 }
 
-/* 各パネルの表示タイミングを少しずつズラしてリッチに */
-.settings { animation: fadeInUp 0.6s ease-out forwards; }
-.preview { animation: fadeInUp 0.6s ease-out 0.15s forwards; opacity: 0; }
-.gallery-section { animation: fadeInUp 0.6s ease-out 0.3s forwards; opacity: 0; }
-.admin-section { animation: fadeInUp 0.6s ease-out 0.45s forwards; opacity: 0; }
+.settings { -webkit-animation: fadeInUp 0.6s ease-out forwards; animation: fadeInUp 0.6s ease-out forwards; }
+.preview { -webkit-animation: fadeInUp 0.6s ease-out 0.15s forwards; animation: fadeInUp 0.6s ease-out 0.15s forwards; opacity: 0; }
+.gallery-section { -webkit-animation: fadeInUp 0.6s ease-out 0.3s forwards; animation: fadeInUp 0.6s ease-out 0.3s forwards; opacity: 0; }
+.admin-section { -webkit-animation: fadeInUp 0.6s ease-out 0.45s forwards; animation: fadeInUp 0.6s ease-out 0.45s forwards; opacity: 0; }
 
-/* 2. ボタンにカーソルを合わせたときの「浮き上がる」アニメーション */
-button {
-    transition: all 0.3s ease !important; /* 動きを滑らかにする魔法 */
+@-webkit-keyframes fadeInTab {
+    from { opacity: 0; -webkit-transform: translateY(5px); transform: translateY(5px); }
+    to { opacity: 1; -webkit-transform: translateY(0); transform: translateY(0); }
 }
-button:hover {
-    transform: translateY(-2px); /* 2px上に浮く */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3); /* 影を濃くする */
-}
-button:active {
-    transform: translateY(1px); /* クリックした瞬間に沈み込む */
-}
-
-/* 緑色のアップロードボタンは特に目立たせる */
-.upload-btn:hover {
-    transform: translateY(-3px) scale(1.02); /* 少しだけ拡大 */
-    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
-}
-
-/* 3. ギャラリーのカードにカーソルを合わせたときの拡大アニメーション */
-.gallery-item {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.gallery-item:hover {
-    transform: translateY(-5px) scale(1.03); /* 少し手前に迫ってくる */
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
-    z-index: 2; /* 拡大されたときに他の画像の下に隠れないようにする */
-}
-
-/* 4. タブを切り替えたときのフワッと切り替わるアニメーション */
 @keyframes fadeInTab {
     from { opacity: 0; transform: translateY(5px); }
     to { opacity: 1; transform: translateY(0); }
 }
-.tab-content.active {
-    animation: fadeInTab 0.3s ease-out forwards;
+.tab-content.active { -webkit-animation: fadeInTab 0.3s ease-out forwards; animation: fadeInTab 0.3s ease-out forwards; }
+
+/* ==========================================
+   8. スマホ表示用レイアウト（完全見切れ防止）
+   ========================================== */
+@media (max-width: 768px) {
+    body { padding: 10px; }
+    .container { flex-direction: column; align-items: flex-start; }
+    
+    .settings, .preview, .gallery-section, .admin-section {
+        flex-basis: 100%;
+        width: 100%;
+        padding: 15px;
+    }
+    
+    h1 { font-size: 24px; }
+    
+    .preview {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* カードを中央に配置 */
+    }
+    
+    #card {
+        transform-origin: top center; /* カードを真ん中を基準に縮小する */
+    }
+    
+    /* スタンプ編集時のサイズをスマホ用に調整 */
+    .photo-container.is-editing-stamps {
+        transform: translate(-50%, -50%) scale(1.5) !important; 
+    }
 }
+
+/* * 機種サイズごとのプレビューカード縮小設定
+ * (CSSの仕様上、スマホの幅を直接計算式に入れるとエラーになるため、サイズごとに固定します)
+ */
+@media (max-width: 768px) { #card { -webkit-transform: scale(0.60); transform: scale(0.60); margin-bottom: -300px; } }
+@media (max-width: 430px) { #card { -webkit-transform: scale(0.31); transform: scale(0.31); margin-bottom: -517px; } }
+@media (max-width: 390px) { #card { -webkit-transform: scale(0.28); transform: scale(0.28); margin-bottom: -540px; } }
+@media (max-width: 375px) { #card { -webkit-transform: scale(0.27); transform: scale(0.27); margin-bottom: -547px; } }
+@media (max-width: 330px) { #card { -webkit-transform: scale(0.24); transform: scale(0.24); margin-bottom: -570px; } }
