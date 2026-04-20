@@ -149,15 +149,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // script.js (下の方にあります)
 
-    // ダウンロード機能
-    downloadBtn.addEventListener('click', () => {
-        // ダウンロード前に選択中のスタンプの枠線を消す
-        const selectedStamp = document.querySelector('.stamp:focus');
-        if(selectedStamp) { selectedStamp.blur(); }
+    // ダウンロード機能
+    downloadBtn.addEventListener('click', () => {
+        // ダウンロード前にすべてのスタンプの選択枠（四隅のハンドル）を消す
+        document.querySelectorAll('.stamp.is-selected').forEach(s => {
+            s.classList.remove('is-selected');
+        });
 
-        // --- ▼ ここから追加 ▼ ---
-        // スマホ表示の縮小(transform)を一時的に解除
-        const previewElement = document.querySelector('.preview');
+        // --- ▼ ここから追加 ▼ ---
+        // スマホ表示の縮小(transform)を一時的に解除
+        const previewElement = document.querySelector('.preview');
         // 元のインラインスタイルを保存 (通常は空のはず)
         const originalTransform = previewElement.style.transform;
         // getComputedStyleで現在適用されているtransformを取得
