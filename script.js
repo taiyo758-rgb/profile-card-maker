@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageUpload2 = document.getElementById('imageUpload2');
     const photo1 = document.getElementById('photo1');
     const photo2 = document.getElementById('photo2');
-    const downloadBtn = document.getElementById('downloadBtn');
     
     // テキスト入出力要素を取得
     const nameInput = document.getElementById('nameInput');
@@ -125,42 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ダウンロード機能
-    downloadBtn.addEventListener('click', () => {
-        // ダウンロード前にすべてのスタンプの選択枠（四隅のハンドル）を消す
-        document.querySelectorAll('.stamp.is-selected').forEach(s => {
-            s.classList.remove('is-selected');
-        });
-
-        // スマホ表示の縮小(transform)を一時的に解除
-        const previewElement = document.querySelector('.preview');
-        const originalTransform = previewElement.style.transform;
-        const computedTransform = window.getComputedStyle(previewElement).transform;
-
-        if (computedTransform !== 'none') {
-            previewElement.style.transform = 'none';
-        }
-
-        html2canvas(card, {     
-            scale: 2,
-            useCORS: true 
-        }).then(canvas => {
-            const link = document.createElement('a');
-            link.href = canvas.toDataURL('image/png');
-            link.download = 'profile-card.png';
-            link.click();
-
-            if (computedTransform !== 'none') {
-                previewElement.style.transform = originalTransform;
-            }
-        }).catch(err => {
-            console.error('oops, something went wrong!', err);
-            if (computedTransform !== 'none') {
-                previewElement.style.transform = originalTransform;
-            }
-        });
-    });
-}); // <--- ここまでが DOMContentLoaded (初期設定)
 
 
 // ==========================================
