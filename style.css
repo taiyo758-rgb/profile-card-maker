@@ -138,21 +138,24 @@ fieldset {
     */
 }
 
-.name { top: 280px; left: 60px; font-size: 24px; } /* 調整例 */
-.birth { top: 320px; left: 60px; font-size: 24px; } /* 調整例 */
-.grade { top: 360px; left: 60px; font-size: 24px; } /* 調整例 */
-.station { top: 400px; left: 60px; font-size: 24px; } /* 調整例 */
-.job { top: 440px; left: 60px; font-size: 24px; } /* 調整例 */
-.mbti { top: 480px; left: 60px; font-size: 24px; } /* 調整例 */
-.club { top: 520px; left: 60px; font-size: 24px; } /* 調整例 */
-.sign { top: 560px; left: 60px; font-size: 24px; } /* 調整例 */
+/* --- 各写真とテキストの位置・サイズ調整 --- */
+
+.name { top: 280px; left: 60px; font-size: 24px; }
+.grade { top: 320px; left: 60px; font-size: 24px; }
+.hometown { top: 360px; left: 60px; font-size: 24px; }
+.birth { top: 400px; left: 60px; font-size: 24px; }
+.station { top: 440px; left: 60px; font-size: 24px; }
+.job { top: 480px; left: 60px; font-size: 24px; }
+.mbti { top: 520px; left: 60px; font-size: 24px; }
+.club { top: 560px; left: 60px; font-size: 24px; }
+.sign { top: 600px; left: 60px; font-size: 24px; }
 .comment { 
-    top: 600px; 
+    top: 640px; 
     left: 60px; 
-    width: 650px; /* 必要に応じて幅も調整 */
+    width: 650px; 
     font-size: 24px; 
     line-height: 1.4; 
-} /* 調整例 */
+}
 
 /* （この下の固定ロゴやタイトル、モーダルなどのスタイルはそのまま） */
 
