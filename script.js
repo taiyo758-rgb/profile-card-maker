@@ -313,6 +313,7 @@ function makeInteractable(element) {
         });
 }
 
+// ▼▼▼ スタンプ生成処理を丸ごと置き換えてください ▼▼▼
 const stampOptions = document.querySelectorAll('.stamp-option');
 stampOptions.forEach(option => {
     option.addEventListener('click', () => {
@@ -322,13 +323,32 @@ stampOptions.forEach(option => {
 
         const newStamp = document.createElement('div');
         newStamp.classList.add('stamp');
-        newStamp.setAttribute('tabindex', 0); // 選択できるようにする
 
+        // スタンプの中身(絵文字等)を入れるコンテナ
+        const content = document.createElement('div');
+        content.classList.add('stamp-content');
         if (option.classList.contains('mosaic')) {
-            newStamp.classList.add('mosaic');
-        } else {
-            newStamp.textContent = option.textContent;
+            content.classList.add('mosaic');
         }
+        content.textContent = option.textContent;
+        newStamp.appendChild(content);
+
+        // 4隅の操作ハンドル（リサイズ用）を追加
+        const corners = ['tl', 'tr', 'bl', 'br'];
+        corners.forEach(pos => {
+            const handle = document.createElement('div');
+            handle.className = `resize-handle ${pos}`;
+            newStamp.appendChild(handle);
+        });
+        
+        targetContainer.appendChild(newStamp);
+        makeInteractable(newStamp);
+
+        // 追加した瞬間に他の選択を解除し、これを「選択状態」にする
+        document.querySelectorAll('.stamp').forEach(s => s.classList.remove('is-selected'));
+        newStamp.classList.add('is-selected');
+    });
+});
         
         targetContainer.appendChild(newStamp);
         makeInteractable(newStamp);
