@@ -356,8 +356,10 @@ document.addEventListener('DOMContentLoaded', () => {
             uploadBtn.disabled = true;
             uploadBtn.textContent = 'アップロード中...';
 
-            html2canvas(document.getElementById('card'), { scale: 0.8, useCORS: true }).then(canvas => {
-                const imageDataUrl = canvas.toDataURL('image/jpeg', 0.5); 
+            // ▼ scale（解像度）を 0.8 から 1.5 にアップ ▼
+            html2canvas(document.getElementById('card'), { scale: 1.5, useCORS: true }).then(canvas => {
+                // ▼ 画質を 0.5（50%）から 0.85（85%）にアップ ▼
+                const imageDataUrl = canvas.toDataURL('image/jpeg', 0.85); 
                 
                 const newCardRef = database.ref('cards').push();
                 newCardRef.set({
