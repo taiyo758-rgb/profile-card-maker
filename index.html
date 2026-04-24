@@ -185,6 +185,13 @@
         </div>
     </div>
 
+    <div id="cropModal" class="modal">
+        </div>
+
+    <div id="imageModal" class="modal" style="display: none; background-color: rgba(0,0,0,0.85); z-index: 10001;">
+        <span style="position: absolute; top: 15px; right: 25px; color: white; font-size: 40px; cursor: pointer; user-select: none;">&times;</span>
+        <img id="expandedImage" src="" style="max-width: 95vw; max-height: 90vh; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.5);">
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
