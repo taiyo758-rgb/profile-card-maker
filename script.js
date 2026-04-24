@@ -413,6 +413,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const img = document.createElement('img');
             img.src = card.image;
+            img.style.cursor = 'pointer'; // タップできることを示す指マーク
+        
+        // ▼ 追加：画像をタップしたときの処理（拡大表示） ▼
+            img.addEventListener('click', () => {
+                const imageModal = document.getElementById('imageModal');
+                const expandedImage = document.getElementById('expandedImage');
+                if (imageModal && expandedImage) {
+                    expandedImage.src = card.image; // タップした画像をセット
+                    imageModal.style.display = 'flex'; // モーダルを表示
+                }
+            });
+        // ▲ 追加ここまで ▲
+
             item.appendChild(img);
 
             if (card.ownerId === myUserId) {
@@ -473,6 +486,13 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 alert('パスワードが違います！');
             }
+        });
+    }
+    // ▼ 追加：拡大画像を閉じる処理 ▼
+    const imageModal = document.getElementById('imageModal');
+    if (imageModal) {
+        imageModal.addEventListener('click', () => {
+            imageModal.style.display = 'none';
         });
     }
 }); // <--- DOMContentLoaded ここで終了
