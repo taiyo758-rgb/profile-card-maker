@@ -320,3 +320,21 @@ button:active {
 @media (max-width: 390px) { #card { -webkit-transform: scale(0.28); transform: scale(0.28); margin-bottom: -540px; } }
 @media (max-width: 375px) { #card { -webkit-transform: scale(0.27); transform: scale(0.27); margin-bottom: -547px; } }
 @media (max-width: 330px) { #card { -webkit-transform: scale(0.24); transform: scale(0.24); margin-bottom: -570px; } }
+
+/* ==========================================
+   --- ギャラリー拡大時のアニメーション ---
+   ========================================== */
+#expandedImage {
+    -webkit-animation: zoomInImage 0.3s ease-out forwards;
+    animation: zoomInImage 0.3s ease-out forwards;
+}
+
+@-webkit-keyframes zoomInImage {
+    from { -webkit-transform: scale(0.8); opacity: 0; }
+    to { -webkit-transform: scale(1); opacity: 1; }
+}
+
+@keyframes zoomInImage {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
