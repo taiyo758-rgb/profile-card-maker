@@ -447,14 +447,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let allCards = [];
 
-    database.ref('cards').orderByChild('createdAt').on('value', (snapshot) => {
+    database.ref('cards').on('value', (snapshot) => {
         allCards = []; 
         snapshot.forEach((childSnapshot) => {
             const data = childSnapshot.val();
             data.id = childSnapshot.key; 
             allCards.push(data);
         });
-        allCards.reverse(); 
+        
+        // ▼ 代数（期数）の小さい順に並べ替える処理（復活！） ▼
+        allCards.sort((a, b) => {
+            const genA = parseInt(a.generation) || 0;
+            const genB = parseInt(b.generation) || 0;
+            
+            if (genA !== genB) {
+                // 代数が違う場合は、小さい順（昇順）にする
+                return genA - genB;
+            } else {
+                // 代数が同じ場合は、投稿が新しい順にする
+                return b.createdAt - a.createdAt;
+            }
+        });
+        
         updateGalleryUI(); 
     });
 
