@@ -195,6 +195,25 @@ button:active {
 }
 .delete-btn:hover { background: red; }
 
+/* ▼ 追加：削除ボタンの左に並べる編集ボタン ▼ */
+.edit-btn {
+    position: absolute;
+    top: 5px;
+    right: 40px; /* 削除ボタンの左側に配置 */
+    background: rgba(255, 193, 7, 0.9); /* 目立つ黄色 */
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.edit-btn:hover { background: #e0a800; }
+
 /* ==========================================
    6. モーダルとスタンプ機能
    ========================================== */
