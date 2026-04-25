@@ -621,4 +621,78 @@ document.addEventListener('DOMContentLoaded', () => {
             imageModal.style.display = 'none';
         });
     }
+
+    // ==========================================
+    // --- 7. 管理者一括軽量化（圧縮）機能 ---
+    // ==========================================
+    const adminCompressBtn = document.getElementById('adminCompressBtn');
+    if (adminCompressBtn) {
+        adminCompressBtn.addEventListener('click', async () => {
+            const password = prompt('管理者パスワードを入力してください:');
+            const adminPassword = 'wasawasa2026';
+
+            if (password === null) return;
+            if (password !== adminPassword) {
+                alert('パスワードが違います！');
+                return;
+            }
+
+            if (!confirm('【警告】\n既存のギャラリー画像をすべて自動で軽量化（圧縮）します。\n※この処理には数分かかる場合があります。途中で画面を閉じないでください。よろしいですか？')) {
+                return;
+            }
+
+            adminCompressBtn.disabled = true;
+            adminCompressBtn.textContent = '🔄 軽量化処理中... 絶対に画面を閉じないでください！';
+
+            let successCount = 0;
+
+            // 1枚ずつ順番に処理する
+            for (let i = 0; i < allCards.length; i++) {
+                const card = allCards[i];
+                
+                await new Promise((resolve) => {
+                    const img = new Image();
+                    img.crossOrigin = "Anonymous"; // エラー回避
+                    img.onload = () => {
+                        // 横幅が1800px（scale: 1.5相当）より大きい重い画像だけを縮小対象にする
+                        if (img.width > 1800) {
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            
+                            // 横幅を1800pxに縮小し、縦幅をそれに合わせる
+                            const targetWidth = 1800;
+                            const targetHeight = img.height * (1800 / img.width);
+                            
+                            canvas.width = targetWidth;
+                            canvas.height = targetHeight;
+                            
+                            // キャンバスに縮小して描画
+                            ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+                            
+                            // 圧縮した新しいデータを作成 (画質80%)
+                            const compressedData = canvas.toDataURL('image/jpeg', 0.8);
+                            
+                            // データベースの画像を上書き
+                            database.ref('cards/' + card.id).update({ image: compressedData }).then(() => {
+                                successCount++;
+                                resolve();
+                            }).catch((err) => {
+                                console.error(err);
+                                resolve();
+                            });
+                        } else {
+                            // すでに軽い画像は何もしないで次へ
+                            resolve();
+                        }
+                    };
+                    img.onerror = () => resolve(); // エラーが起きたらスキップ
+                    img.src = card.image;
+                });
+            }
+            
+            alert(`処理完了！\n${successCount}枚の重いカードを軽量化しました。これでギャラリーの読み込みが速くなります！`);
+            adminCompressBtn.disabled = false;
+            adminCompressBtn.textContent = '🛠 管理者専用：重いカードを一括軽量化';
+        });
+    }
 }); // <--- DOMContentLoaded ここで終了
