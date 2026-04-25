@@ -331,14 +331,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // ▼ 再編集モードで使用する変数 ▼
+    let editingCardId = null;
+
     const uploadBtn = document.getElementById('uploadBtn');
     if (uploadBtn) {
         uploadBtn.addEventListener('click', () => {
             document.querySelectorAll('.stamp.is-selected').forEach(s => s.classList.remove('is-selected'));
             const previewElement = document.querySelector('.preview');
-            const originalTransform = previewElement.style.transform;
-            const computedTransform = window.getComputedStyle(previewElement).transform;
-            if (computedTransform !== 'none') previewElement.style.transform = 'none';
+            const cardElement = document.getElementById('card'); // #card要素を取得
+
+            // --- ▼ 修正：html2canvas実行前にレンダリングをリセット ▼ ---
+            // スマホでの scale 縮小をインラインスタイルで強制的にオフにする (!important付き)
+            const originalPreviewStyle = previewElement.getAttribute('style') || '';
+            const originalCardStyle = cardElement.getAttribute('style') || '';
+
+            // スマホ用の縮小を完全に打ち消す (!importantが必要)
+            previewElement.style.setProperty('transform', 'none', 'important');
+            previewElement.style.setProperty('margin-bottom', '0', 'important');
+            
+            // #card 自体の縮小も打ち消す
+            cardElement.style.setProperty('transform', 'none', 'important');
+            cardElement.style.setProperty('margin-bottom', '0', 'important');
 
             const searchText = `
                 ${document.getElementById('nameInput') ? document.getElementById('nameInput').value : ''} 
@@ -354,59 +368,93 @@ document.addEventListener('DOMContentLoaded', () => {
             const generationNumber = document.getElementById('numberInput') ? document.getElementById('numberInput').value : '46';
 
             uploadBtn.disabled = true;
-            uploadBtn.textContent = 'アップロード中...';
+            uploadBtn.textContent = 'アップロード中... (高画質生成中)';
 
-            // ▼ scale（解像度）を 0.8 から 1.5 にアップ ▼
-            html2canvas(document.getElementById('card'), { scale: 1.5, useCORS: true }).then(canvas => {
-                // ▼ 画質を 0.5（50%）から 0.85（85%）にアップ ▼
-                const imageDataUrl = canvas.toDataURL('image/jpeg', 0.85); 
-                
-                const newCardRef = database.ref('cards').push();
-                newCardRef.set({
-                    ownerId: myUserId,
-                    generation: generationNumber,
-                    searchWords: searchText,
-                    image: imageDataUrl,
-                    createdAt: firebase.database.ServerValue.TIMESTAMP 
-                }).then(() => {
-                    alert('アップロード完了！');
+            // ブラウザにレンダリングを強制させるための小さなウェイト
+            setTimeout(() => {
+                // ▼ 修正：ターゲットを #card要素 に変更し、scale（解像度）を 2.5 に大幅アップ ▼
+                html2canvas(cardElement, { 
+                    scale: 2.5, 
+                    useCORS: true 
+                }).then(canvas => {
+                    const imageDataUrl = canvas.toDataURL('image/jpeg', 0.85); // JPEG 85%
+                    
+                    // --- ▼ 保存するデータ (rawFieldsも含めて保存) ▼ ---
+                    const cardData = {
+                        ownerId: myUserId,
+                        generation: generationNumber,
+                        searchWords: searchText,
+                        image: imageDataUrl,
+                        rawFields: {
+                            name: document.getElementById('nameInput') ? document.getElementById('nameInput').value : '',
+                            grade: document.getElementById('gradeInput') ? document.getElementById('gradeInput').value : '',
+                            hometown: document.getElementById('hometownInput') ? document.getElementById('hometownInput').value : '',
+                            birth: document.getElementById('birthInput') ? document.getElementById('birthInput').value : '',
+                            station: document.getElementById('stationInput') ? document.getElementById('stationInput').value : '',
+                            job: document.getElementById('jobInput') ? document.getElementById('jobInput').value : '',
+                            mbti: document.getElementById('mbtiInput') ? document.getElementById('mbtiInput').value : '',
+                            club: document.getElementById('clubInput') ? document.getElementById('clubInput').value : '',
+                            comment: document.getElementById('commentInput') ? document.getElementById('commentInput').value : '',
+                            sign: document.getElementById('signSelect') ? document.getElementById('signSelect').value : ''
+                        }
+                    };
+                    
+                    if (editingCardId) {
+                        // 【上書きモード】既存のカードを上書きする
+                        database.ref('cards/' + editingCardId).update(cardData).then(() => {
+                            alert('カードを上書き保存しました！');
+                            editingCardId = null; // 編集モード解除
+                            uploadBtn.style.backgroundColor = '#28a745'; // 緑色に戻す
+                        }).catch((error) => {
+                            console.error("エラー: ", error);
+                            alert('上書きに失敗しました。');
+                        }).finally(() => {
+                            // --- ▼ 修正：処理が終わったらインラインスタイルを元に戻す ▼ ---
+                            previewElement.setAttribute('style', originalPreviewStyle);
+                            cardElement.setAttribute('style', originalCardStyle);
+                            uploadBtn.disabled = false;
+                            uploadBtn.textContent = 'サイトにアップロードして共有';
+                        });
+                    } else {
+                        // 【新規作成モード】新しいカードとして追加する
+                        cardData.createdAt = firebase.database.ServerValue.TIMESTAMP;
+                        const newCardRef = database.ref('cards').push();
+                        newCardRef.set(cardData).then(() => {
+                            alert('アップロード完了！');
+                        }).catch((error) => {
+                            console.error("エラー: ", error);
+                            alert('アップロードに失敗しました。');
+                        }).finally(() => {
+                            // --- ▼ 修正：処理が終わったらインラインスタイルを元に戻す ▼ ---
+                            previewElement.setAttribute('style', originalPreviewStyle);
+                            cardElement.setAttribute('style', originalCardStyle);
+                            uploadBtn.disabled = false;
+                            uploadBtn.textContent = 'サイトにアップロードして共有';
+                        });
+                    }
                 }).catch((error) => {
-                    console.error("エラーが発生しました: ", error);
-                    alert('アップロードに失敗しました。');
-                }).finally(() => {
-                    if (computedTransform !== 'none') previewElement.style.transform = originalTransform;
+                    console.error("html2canvasエラー: ", error);
+                    alert('画像の生成に失敗しました。');
+                    // 失敗してもスタイルは戻す
+                    previewElement.setAttribute('style', originalPreviewStyle);
+                    cardElement.setAttribute('style', originalCardStyle);
                     uploadBtn.disabled = false;
                     uploadBtn.textContent = 'サイトにアップロードして共有';
                 });
-            });
+            }, 100); // 100ミリ秒待つ
         });
     }
 
     let allCards = [];
 
-    database.ref('cards').on('value', (snapshot) => {
+    database.ref('cards').orderByChild('createdAt').on('value', (snapshot) => {
         allCards = []; 
         snapshot.forEach((childSnapshot) => {
             const data = childSnapshot.val();
             data.id = childSnapshot.key; 
             allCards.push(data);
         });
-        
-        // ▼ 変更：代数（期数）の小さい順に並べ替える ▼
-        allCards.sort((a, b) => {
-            // 文字列で保存されている代数を数値（数字）に変換
-            const genA = parseInt(a.generation) || 0;
-            const genB = parseInt(b.generation) || 0;
-            
-            if (genA !== genB) {
-                // 代数が違う場合は、小さい順（昇順）にする
-                return genA - genB;
-            } else {
-                // 代数が同じ場合は、投稿が新しい順にする
-                return b.createdAt - a.createdAt;
-            }
-        });
-        
+        allCards.reverse(); 
         updateGalleryUI(); 
     });
 
@@ -429,8 +477,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const img = document.createElement('img');
             img.src = card.image;
             img.style.cursor = 'pointer'; // タップできることを示す指マーク
-        
-        // ▼ 追加：画像をタップしたときの処理（拡大表示） ▼
+            
+            // ▼ 画像をタップしたときの処理（拡大表示） ▼
             img.addEventListener('click', () => {
                 const imageModal = document.getElementById('imageModal');
                 const expandedImage = document.getElementById('expandedImage');
@@ -439,20 +487,67 @@ document.addEventListener('DOMContentLoaded', () => {
                     imageModal.style.display = 'flex'; // モーダルを表示
                 }
             });
-        // ▲ 追加ここまで ▲
-
             item.appendChild(img);
 
             if (card.ownerId === myUserId) {
+                // --- 削除ボタン ---
                 const delBtn = document.createElement('button');
                 delBtn.className = 'delete-btn';
                 delBtn.innerHTML = '×';
-                delBtn.onclick = () => {
+                delBtn.onclick = (e) => {
+                    e.stopPropagation(); // 拡大表示させない
                     if(confirm('本当に自分のカードを削除しますか？')) {
                         database.ref('cards/' + card.id).remove();
                     }
                 };
                 item.appendChild(delBtn);
+
+                // --- ▼ 再編集ボタン（✏️） ▼ ---
+                const editBtn = document.createElement('button');
+                editBtn.className = 'edit-btn';
+                editBtn.innerHTML = '✏️';
+                editBtn.onclick = (e) => {
+                    e.stopPropagation(); // 画像を拡大表示させない
+                    
+                    if (!card.rawFields) {
+                        alert('このカードは古いバージョンで作られているため、再編集できません。（お手数ですが新しく作り直してください🙇‍♂️）');
+                        return;
+                    }
+
+                    if (confirm('入力内容を復元して再編集しますか？\n（※写真は保存されていないため、再度選び直す必要があります）')) {
+                        // 入力欄にデータを復元
+                        if(document.getElementById('nameInput')) document.getElementById('nameInput').value = card.rawFields.name || '';
+                        if(document.getElementById('gradeInput')) document.getElementById('gradeInput').value = card.rawFields.grade || '';
+                        if(document.getElementById('hometownInput')) document.getElementById('hometownInput').value = card.rawFields.hometown || '';
+                        if(document.getElementById('birthInput')) document.getElementById('birthInput').value = card.rawFields.birth || '';
+                        if(document.getElementById('stationInput')) document.getElementById('stationInput').value = card.rawFields.station || '';
+                        if(document.getElementById('jobInput')) document.getElementById('jobInput').value = card.rawFields.job || '';
+                        if(document.getElementById('mbtiInput')) document.getElementById('mbtiInput').value = card.rawFields.mbti || '';
+                        if(document.getElementById('clubInput')) document.getElementById('clubInput').value = card.rawFields.club || '';
+                        if(document.getElementById('commentInput')) document.getElementById('commentInput').value = card.rawFields.comment || '';
+                        if(document.getElementById('signSelect')) document.getElementById('signSelect').value = card.rawFields.sign || '';
+
+                        // プレビューの文字もリアルタイムに更新させる
+                        ['nameInput', 'gradeInput', 'hometownInput', 'birthInput', 'stationInput', 'jobInput', 'mbtiInput', 'clubInput', 'commentInput'].forEach(id => {
+                            const el = document.getElementById(id);
+                            if(el) el.dispatchEvent(new Event('input'));
+                        });
+                        const signEl = document.getElementById('signSelect');
+                        if(signEl) signEl.dispatchEvent(new Event('change'));
+
+                        // アップロードボタンを「上書きモード」の見た目に変更
+                        editingCardId = card.id;
+                        const uploadBtn = document.getElementById('uploadBtn');
+                        if (uploadBtn) {
+                            uploadBtn.textContent = '✏️ 変更を保存して上書きする';
+                            uploadBtn.style.backgroundColor = '#ffc107'; // 注意を引く黄色に
+                        }
+
+                        // 一番上（設定エリア）までスクロールしてあげる
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                };
+                item.appendChild(editBtn);
             }
             galleryGrid.appendChild(item);
         });
@@ -503,7 +598,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    // ▼ 追加：拡大画像を閉じる処理 ▼
+
+    // --- 拡大画像を閉じる処理 ---
     const imageModal = document.getElementById('imageModal');
     if (imageModal) {
         imageModal.addEventListener('click', () => {
