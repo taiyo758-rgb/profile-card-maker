@@ -372,9 +372,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // ブラウザにレンダリングを強制させるための小さなウェイト
             setTimeout(() => {
-                // ▼ 修正：ターゲットを #card要素 に変更し、scale（解像度）を 2.5 に大幅アップ ▼
+                // ▼ 変更：バグが直ったので、scaleを 1.5 に下げてデータサイズを劇的に軽くする ▼
                 html2canvas(cardElement, { 
-                    scale: 2.5, 
+                    scale: 1.5, 
                     useCORS: true 
                 }).then(canvas => {
                     const imageDataUrl = canvas.toDataURL('image/jpeg', 0.85); // JPEG 85%
@@ -491,6 +491,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const img = document.createElement('img');
             img.src = card.image;
             img.style.cursor = 'pointer'; // タップできることを示す指マーク
+            img.loading = 'lazy'; // ▼ 追加：画面にスクロールして見えた分だけ描画する（超高速化）
             
             // ▼ 画像をタップしたときの処理（拡大表示） ▼
             img.addEventListener('click', () => {
