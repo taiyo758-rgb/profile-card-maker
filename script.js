@@ -472,65 +472,100 @@ document.addEventListener('DOMContentLoaded', () => {
         updateGalleryUI(); 
     });
 
+    // ==========================================
+    // ▼ 無限スクロール（遅延読み込み）用の変数 ▼
+    // ==========================================
+    let displayedCardCount = 0;
+    const cardsPerLoad = 6; // 1回に表示する枚数（これを少なくするほど最初は軽くなります）
+    let filteredCards = []; // 検索などで絞り込んだ後のカードリスト
+    let scrollObserver = null; // スクロール監視用
+
     function updateGalleryUI() {
         const galleryGrid = document.getElementById('galleryGrid');
         if (!galleryGrid) return;
+        
         galleryGrid.innerHTML = ''; 
+        displayedCardCount = 0; // 表示枚数をリセット
+
+        // 古いスクロール監視を解除
+        if (scrollObserver) {
+            scrollObserver.disconnect();
+        }
 
         const searchInput = document.getElementById('searchInput');
         const searchQuery = searchInput ? searchInput.value.toLowerCase() : '';
         const filterValue = galleryFilterSelect ? galleryFilterSelect.value : 'all';
 
-        allCards.forEach(card => {
-            if (filterValue !== 'all' && card.generation !== filterValue) return;
-            if (searchQuery && !card.searchWords.includes(searchQuery)) return;
+        // 1. まず全カードの中から、条件に合うものだけを「順番通り」に抽出する
+        filteredCards = allCards.filter(card => {
+            if (filterValue !== 'all' && card.generation !== filterValue) return false;
+            if (searchQuery && !card.searchWords.includes(searchQuery)) return false;
+            return true;
+        });
 
+        // 2. 最初の数枚だけを画面に表示する
+        loadMoreCards();
+    }
+
+    // ==========================================
+    // ▼ スクロールに合わせてカードを追加する処理 ▼
+    // ==========================================
+    function loadMoreCards() {
+        const galleryGrid = document.getElementById('galleryGrid');
+        if (!galleryGrid) return;
+
+        // 次に表示する限界の枚数を計算
+        const nextCount = Math.min(displayedCardCount + cardsPerLoad, filteredCards.length);
+        
+        for (let i = displayedCardCount; i < nextCount; i++) {
+            const card = filteredCards[i];
+            
             const item = document.createElement('div');
             item.className = 'gallery-item';
 
             const img = document.createElement('img');
             img.src = card.image;
-            img.style.cursor = 'pointer'; // タップできることを示す指マーク
-            img.loading = 'lazy'; // ▼ 追加：画面にスクロールして見えた分だけ描画する（超高速化）
+            img.style.cursor = 'pointer'; 
+            img.loading = 'lazy'; // 画像の遅延読み込み（さらに高速化）
             
-            // ▼ 画像をタップしたときの処理（拡大表示） ▼
+            // --- 拡大表示の処理 ---
             img.addEventListener('click', () => {
                 const imageModal = document.getElementById('imageModal');
                 const expandedImage = document.getElementById('expandedImage');
                 if (imageModal && expandedImage) {
-                    expandedImage.src = card.image; // タップした画像をセット
-                    imageModal.style.display = 'flex'; // モーダルを表示
+                    expandedImage.src = card.image; 
+                    imageModal.style.display = 'flex'; 
                 }
             });
             item.appendChild(img);
 
+            // --- 自分のカード専用のボタン ---
             if (card.ownerId === myUserId) {
-                // --- 削除ボタン ---
+                // 削除ボタン
                 const delBtn = document.createElement('button');
                 delBtn.className = 'delete-btn';
                 delBtn.innerHTML = '×';
                 delBtn.onclick = (e) => {
-                    e.stopPropagation(); // 拡大表示させない
+                    e.stopPropagation(); 
                     if(confirm('本当に自分のカードを削除しますか？')) {
                         database.ref('cards/' + card.id).remove();
                     }
                 };
                 item.appendChild(delBtn);
 
-                // --- ▼ 再編集ボタン（✏️） ▼ ---
+                // 編集ボタン（✏️）
                 const editBtn = document.createElement('button');
                 editBtn.className = 'edit-btn';
                 editBtn.innerHTML = '✏️';
                 editBtn.onclick = (e) => {
-                    e.stopPropagation(); // 画像を拡大表示させない
+                    e.stopPropagation(); 
                     
                     if (!card.rawFields) {
-                        alert('このカードは古いバージョンで作られているため、再編集できません。（お手数ですが新しく作り直してください🙇‍♂️）');
+                        alert('このカードは古いバージョンで作られているため、再編集できません。');
                         return;
                     }
 
                     if (confirm('入力内容を復元して再編集しますか？\n（※写真は保存されていないため、再度選び直す必要があります）')) {
-                        // 入力欄にデータを復元
                         if(document.getElementById('nameInput')) document.getElementById('nameInput').value = card.rawFields.name || '';
                         if(document.getElementById('gradeInput')) document.getElementById('gradeInput').value = card.rawFields.grade || '';
                         if(document.getElementById('hometownInput')) document.getElementById('hometownInput').value = card.rawFields.hometown || '';
@@ -542,7 +577,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         if(document.getElementById('commentInput')) document.getElementById('commentInput').value = card.rawFields.comment || '';
                         if(document.getElementById('signSelect')) document.getElementById('signSelect').value = card.rawFields.sign || '';
 
-                        // プレビューの文字もリアルタイムに更新させる
                         ['nameInput', 'gradeInput', 'hometownInput', 'birthInput', 'stationInput', 'jobInput', 'mbtiInput', 'clubInput', 'commentInput'].forEach(id => {
                             const el = document.getElementById(id);
                             if(el) el.dispatchEvent(new Event('input'));
@@ -550,22 +584,38 @@ document.addEventListener('DOMContentLoaded', () => {
                         const signEl = document.getElementById('signSelect');
                         if(signEl) signEl.dispatchEvent(new Event('change'));
 
-                        // アップロードボタンを「上書きモード」の見た目に変更
                         editingCardId = card.id;
                         const uploadBtn = document.getElementById('uploadBtn');
                         if (uploadBtn) {
                             uploadBtn.textContent = '✏️ 変更を保存して上書きする';
-                            uploadBtn.style.backgroundColor = '#ffc107'; // 注意を引く黄色に
+                            uploadBtn.style.backgroundColor = '#ffc107'; 
                         }
-
-                        // 一番上（設定エリア）までスクロールしてあげる
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
                 };
                 item.appendChild(editBtn);
             }
             galleryGrid.appendChild(item);
-        });
+        }
+        
+        displayedCardCount = nextCount;
+
+        // 3. まだ読み込んでいないカードが残っている場合、一番下に「透明な目印」を置いてスクロールを監視する
+        if (displayedCardCount < filteredCards.length) {
+            const sentinel = document.createElement('div');
+            sentinel.style.height = '1px';
+            galleryGrid.appendChild(sentinel);
+
+            scrollObserver = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    scrollObserver.disconnect(); // 一旦監視をやめる
+                    sentinel.remove(); // 目印を消す
+                    loadMoreCards(); // 次のカードを読み込む
+                }
+            }, { rootMargin: '300px' }); // 画面の下から300px近づいたら次を読み込み開始
+
+            scrollObserver.observe(sentinel);
+        }
     }
 
     const searchInput = document.getElementById('searchInput');
