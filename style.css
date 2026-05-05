@@ -182,7 +182,14 @@ button:active {
     -webkit-transition: -webkit-transform 0.3s ease, box-shadow 0.3s ease;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.gallery-item img { width: 100%; height: auto; display: block; }
+.gallery-item img { 
+    width: 100%; 
+    height: auto; 
+    display: block; 
+    /* ▼ 追加：Safariの暴走を防ぐため、最初からカードと同じ縦横比の枠を確保する ▼ */
+    aspect-ratio: 1200 / 750; 
+    object-fit: cover;
+}
 .gallery-item:hover {
     -webkit-transform: translateY(-5px) scale(1.03); transform: translateY(-5px) scale(1.03); 
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4); z-index: 2; 
