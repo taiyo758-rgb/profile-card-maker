@@ -31,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const numberOutput = document.getElementById('numberOutput');
     const signSelect = document.getElementById('signSelect');
 
-    // 代数ドロップダウンの作成
     if (numberInput) {
         for (let i = 45; i <= 100; i++) {
             const option = document.createElement('option');
@@ -46,19 +45,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 星座の処理
     if (signSelect) {
         signSelect.addEventListener('change', () => {
             const selectedOption = signSelect.options[signSelect.selectedIndex];
-            if (selectedOption.value) {
-                 signOutput.textContent = "星座: " + selectedOption.text;
-            } else {
-                signOutput.textContent = "星座: 未選択";
-            }
+            signOutput.textContent = selectedOption.value ? "星座: " + selectedOption.text : "星座: 未選択";
         });
     }
 
-    // テキスト入力のリアルタイム反映
     if(nameInput) nameInput.addEventListener('input', () => nameOutput.textContent = "名前: " + (nameInput.value || ''));
     if(gradeInput) gradeInput.addEventListener('input', () => gradeOutput.textContent = "学部学年: " + (gradeInput.value || '未入力'));
     if(hometownInput) hometownInput.addEventListener('input', () => hometownOutput.textContent = "出身地: " + (hometownInput.value || '未入力'));
@@ -69,7 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if(mbtiInput) mbtiInput.addEventListener('input', () => mbtiOutput.textContent = "MBTI: " + (mbtiInput.value || '未入力'));
     if(clubInput) clubInput.addEventListener('input', () => clubOutput.textContent = "高校時代の部活: " + (clubInput.value || '未入力'));
 
-    // 背景変更
     document.querySelectorAll('input[name="bg"]').forEach(radio => {
         radio.addEventListener('change', (e) => {
             card.style.backgroundImage = `url(${e.target.value})`;
@@ -101,15 +93,13 @@ document.addEventListener('DOMContentLoaded', () => {
             reader.readAsDataURL(file);
         });
     }
-    
     setupImageUpload(imageUpload1, photo1);
     setupImageUpload(imageUpload2, photo2);
 
     if (cropBtn) {
         cropBtn.addEventListener('click', () => {
             if (cropper) {
-                const canvas = cropper.getCroppedCanvas();
-                currentPhotoElement.src = canvas.toDataURL();
+                currentPhotoElement.src = cropper.getCroppedCanvas().toDataURL();
                 modal.style.display = 'none';
                 cropper.destroy();
             }
@@ -173,8 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
             content.textContent = option.textContent;
             newStamp.appendChild(content);
 
-            const corners = ['tl', 'tr', 'bl', 'br'];
-            corners.forEach(pos => {
+            ['tl', 'tr', 'bl', 'br'].forEach(pos => {
                 const handle = document.createElement('div');
                 handle.className = `resize-handle ${pos}`;
                 newStamp.appendChild(handle);
@@ -199,44 +188,34 @@ document.addEventListener('DOMContentLoaded', () => {
         const getParentScale = (target) => {
             const parent = target.parentElement;
             if (!parent) return 1;
-            const rect = parent.getBoundingClientRect();
             const offsetWidth = parent.offsetWidth;
-            return offsetWidth > 0 ? (rect.width / offsetWidth) : 1;
+            return offsetWidth > 0 ? (parent.getBoundingClientRect().width / offsetWidth) : 1;
         };
 
         interact(element)
             .draggable({
                 ignoreFrom: '.resize-handle',
                 listeners: {
-                    start(event) {
-                        const target = event.target;
-                        const previewScale = getParentScale(target);
-                        target.setAttribute('data-preview-scale', previewScale);
-                    },
+                    start(event) { event.target.setAttribute('data-preview-scale', getParentScale(event.target)); },
                     move(event) {
                         const target = event.target;
                         const previewScale = parseFloat(target.getAttribute('data-preview-scale')) || 1;
                         const x = (parseFloat(target.getAttribute('data-x')) || 0) + (event.dx / previewScale);
                         const y = (parseFloat(target.getAttribute('data-y')) || 0) + (event.dy / previewScale);
                         target.style.transform = `translate(${x}px, ${y}px)`;
-                        target.setAttribute('data-x', x);
-                        target.setAttribute('data-y', y);
+                        target.setAttribute('data-x', x); target.setAttribute('data-y', y);
                     }
                 }
             })
             .resizable({
                 edges: { left: '.tl, .bl', right: '.tr, .br', top: '.tl, .tr', bottom: '.bl, .br' },
-                modifiers: [
-                    interact.modifiers.aspectRatio({ ratio: 'preserve' }),
-                    interact.modifiers.restrictSize({ min: { width: 20, height: 20 } })
-                ],
+                modifiers: [ interact.modifiers.aspectRatio({ ratio: 'preserve' }), interact.modifiers.restrictSize({ min: { width: 20, height: 20 } }) ],
                 listeners: {
                     start(event) {
                         const target = event.target;
-                        const rect = target.getBoundingClientRect();
                         const previewScale = getParentScale(target);
                         target.setAttribute('data-preview-scale', previewScale);
-                        target.setAttribute('data-start-w', rect.width / previewScale);
+                        target.setAttribute('data-start-w', target.getBoundingClientRect().width / previewScale);
                         target.setAttribute('data-start-fontsize', parseFloat(window.getComputedStyle(target).fontSize) || 50);
                     },
                     move(event) {
@@ -245,52 +224,19 @@ document.addEventListener('DOMContentLoaded', () => {
                         let x = (parseFloat(target.getAttribute('data-x')) || 0) + (event.deltaRect.left / previewScale);
                         let y = (parseFloat(target.getAttribute('data-y')) || 0) + (event.deltaRect.top / previewScale);
                         const newWidth = event.rect.width / previewScale;
-                        const newHeight = event.rect.height / previewScale;
                         const startW = parseFloat(target.getAttribute('data-start-w'));
                         const startFontSize = parseFloat(target.getAttribute('data-start-fontsize'));
-                        const newFontSize = startFontSize * (newWidth / startW);
-
+                        
                         Object.assign(target.style, {
-                            width: `${newWidth}px`, height: `${newHeight}px`,
-                            fontSize: `${newFontSize}px`, transform: `translate(${x}px, ${y}px)`
+                            width: `${newWidth}px`, height: `${event.rect.height / previewScale}px`,
+                            fontSize: `${startFontSize * (newWidth / startW)}px`, transform: `translate(${x}px, ${y}px)`
                         });
                         Object.assign(target.dataset, { x, y });
                     }
                 }
             })
-            .gesturable({
-                onstart(event) {
-                    const target = event.target;
-                    target.setAttribute('data-start-w', target.offsetWidth);
-                    target.setAttribute('data-start-h', target.offsetHeight);
-                    target.setAttribute('data-start-fontsize', parseFloat(window.getComputedStyle(target).fontSize) || 50);
-                },
-                onmove(event) {
-                    const target = event.target;
-                    const startW = parseFloat(target.getAttribute('data-start-w'));
-                    const startH = parseFloat(target.getAttribute('data-start-h'));
-                    const startFontSize = parseFloat(target.getAttribute('data-start-fontsize'));
-                    const scale = event.scale;
-                    const newWidth = Math.max(20, startW * scale);
-                    const newHeight = Math.max(20, startH * scale);
-                    const newFontSize = startFontSize * (newWidth / startW);
-                    const x = parseFloat(target.getAttribute('data-x')) || 0;
-                    const y = parseFloat(target.getAttribute('data-y')) || 0;
-
-                    Object.assign(target.style, {
-                        width: `${newWidth}px`, height: `${newHeight}px`,
-                        fontSize: `${newFontSize}px`, transform: `translate(${x}px, ${y}px)`
-                    });
-                }
-            })
-            .on('down', (event) => { 
-                document.querySelectorAll('.stamp').forEach(s => s.classList.remove('is-selected'));
-                element.classList.add('is-selected');
-            })
-            .on('doubletap', (event) => { 
-                if (event.target.classList.contains('resize-handle')) return;
-                element.remove();
-            });
+            .on('down', (e) => { document.querySelectorAll('.stamp').forEach(s => s.classList.remove('is-selected')); element.classList.add('is-selected'); })
+            .on('doubletap', (e) => { if (!e.target.classList.contains('resize-handle')) element.remove(); });
     }
 
     document.addEventListener('mousedown', (e) => {
@@ -311,7 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
       messagingSenderId: "34755367190",
       appId: "1:34755367190:web:9a6c2515d617899e22c037"
     };
-
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
@@ -331,26 +276,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ▼ 再編集モードで使用する変数 ▼
     let editingCardId = null;
-
     const uploadBtn = document.getElementById('uploadBtn');
+    
+    // ▼ データアップロード処理（画像とテキストを分離して保存） ▼
     if (uploadBtn) {
         uploadBtn.addEventListener('click', () => {
             document.querySelectorAll('.stamp.is-selected').forEach(s => s.classList.remove('is-selected'));
             const previewElement = document.querySelector('.preview');
-            const cardElement = document.getElementById('card'); // #card要素を取得
+            const cardElement = document.getElementById('card'); 
 
-            // --- ▼ 修正：html2canvas実行前にレンダリングをリセット ▼ ---
-            // スマホでの scale 縮小をインラインスタイルで強制的にオフにする (!important付き)
             const originalPreviewStyle = previewElement.getAttribute('style') || '';
             const originalCardStyle = cardElement.getAttribute('style') || '';
-
-            // スマホ用の縮小を完全に打ち消す (!importantが必要)
             previewElement.style.setProperty('transform', 'none', 'important');
             previewElement.style.setProperty('margin-bottom', '0', 'important');
-            
-            // #card 自体の縮小も打ち消す
             cardElement.style.setProperty('transform', 'none', 'important');
             cardElement.style.setProperty('margin-bottom', '0', 'important');
 
@@ -362,29 +301,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${document.getElementById('jobInput') ? document.getElementById('jobInput').value : ''} 
                 ${document.getElementById('clubInput') ? document.getElementById('clubInput').value : ''} 
                 ${document.getElementById('stationInput') ? document.getElementById('stationInput').value : ''} 
-                ${document.getElementById('signSelect') ? document.getElementById('signSelect').options[document.getElementById('signSelect').selectedIndex].text : ''}
             `.toLowerCase();
-            
             const generationNumber = document.getElementById('numberInput') ? document.getElementById('numberInput').value : '46';
 
             uploadBtn.disabled = true;
-            uploadBtn.textContent = 'アップロード中... (高画質生成中)';
+            uploadBtn.textContent = 'アップロード中...';
 
-            // ブラウザにレンダリングを強制させるための小さなウェイト
             setTimeout(() => {
-                // ▼ 変更：バグが直ったので、scaleを 1.5 に下げてデータサイズを劇的に軽くする ▼
-                html2canvas(cardElement, { 
-                    scale: 1.5, 
-                    useCORS: true 
-                }).then(canvas => {
-                    const imageDataUrl = canvas.toDataURL('image/jpeg', 0.85); // JPEG 85%
+                html2canvas(cardElement, { scale: 1.5, useCORS: true }).then(canvas => {
+                    const imageDataUrl = canvas.toDataURL('image/jpeg', 0.85); 
                     
-                    // --- ▼ 保存するデータ (rawFieldsも含めて保存) ▼ ---
-                    const cardData = {
+                    // ※ ここが分離のポイント！カード情報にはもう画像を含めない（超軽量）
+                    const cardInfo = {
                         ownerId: myUserId,
                         generation: generationNumber,
                         searchWords: searchText,
-                        image: imageDataUrl,
                         rawFields: {
                             name: document.getElementById('nameInput') ? document.getElementById('nameInput').value : '',
                             grade: document.getElementById('gradeInput') ? document.getElementById('gradeInput').value : '',
@@ -400,53 +331,36 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
                     
                     if (editingCardId) {
-                        // 【上書きモード】既存のカードを上書きする
-                        database.ref('cards/' + editingCardId).update(cardData).then(() => {
+                        // 上書き保存（テキストと画像をそれぞれの場所に上書き）
+                        database.ref('cards/' + editingCardId).update(cardInfo)
+                        .then(() => database.ref('card_images/' + editingCardId).set(imageDataUrl))
+                        .then(() => {
                             alert('カードを上書き保存しました！');
-                            editingCardId = null; // 編集モード解除
-                            uploadBtn.style.backgroundColor = '#28a745'; // 緑色に戻す
-                        }).catch((error) => {
-                            console.error("エラー: ", error);
-                            alert('上書きに失敗しました。');
-                        }).finally(() => {
-                            // --- ▼ 修正：処理が終わったらインラインスタイルを元に戻す ▼ ---
-                            previewElement.setAttribute('style', originalPreviewStyle);
-                            cardElement.setAttribute('style', originalCardStyle);
-                            uploadBtn.disabled = false;
-                            uploadBtn.textContent = 'サイトにアップロードして共有';
-                        });
+                            editingCardId = null; uploadBtn.style.backgroundColor = '#28a745';
+                        }).finally(() => resetUploadState());
                     } else {
-                        // 【新規作成モード】新しいカードとして追加する
-                        cardData.createdAt = firebase.database.ServerValue.TIMESTAMP;
+                        // 新規保存
+                        cardInfo.createdAt = firebase.database.ServerValue.TIMESTAMP;
                         const newCardRef = database.ref('cards').push();
-                        newCardRef.set(cardData).then(() => {
-                            alert('アップロード完了！');
-                        }).catch((error) => {
-                            console.error("エラー: ", error);
-                            alert('アップロードに失敗しました。');
-                        }).finally(() => {
-                            // --- ▼ 修正：処理が終わったらインラインスタイルを元に戻す ▼ ---
-                            previewElement.setAttribute('style', originalPreviewStyle);
-                            cardElement.setAttribute('style', originalCardStyle);
-                            uploadBtn.disabled = false;
-                            uploadBtn.textContent = 'サイトにアップロードして共有';
-                        });
+                        newCardRef.set(cardInfo)
+                        .then(() => database.ref('card_images/' + newCardRef.key).set(imageDataUrl))
+                        .then(() => alert('アップロード完了！'))
+                        .finally(() => resetUploadState());
                     }
-                }).catch((error) => {
-                    console.error("html2canvasエラー: ", error);
-                    alert('画像の生成に失敗しました。');
-                    // 失敗してもスタイルは戻す
-                    previewElement.setAttribute('style', originalPreviewStyle);
-                    cardElement.setAttribute('style', originalCardStyle);
-                    uploadBtn.disabled = false;
-                    uploadBtn.textContent = 'サイトにアップロードして共有';
                 });
-            }, 100); // 100ミリ秒待つ
+            }, 100);
+            
+            function resetUploadState() {
+                previewElement.setAttribute('style', originalPreviewStyle);
+                cardElement.setAttribute('style', originalCardStyle);
+                uploadBtn.disabled = false; uploadBtn.textContent = 'サイトにアップロードして共有';
+            }
         });
     }
 
     let allCards = [];
-
+    
+    // ▼ 高速化の鍵！ここでは「軽い文字データだけ」を一瞬で読み込む ▼
     database.ref('cards').on('value', (snapshot) => {
         allCards = []; 
         snapshot.forEach((childSnapshot) => {
@@ -455,141 +369,116 @@ document.addEventListener('DOMContentLoaded', () => {
             allCards.push(data);
         });
         
-        // ▼ 代数（期数）の小さい順に並べ替える処理（復活！） ▼
         allCards.sort((a, b) => {
             const genA = parseInt(a.generation) || 0;
             const genB = parseInt(b.generation) || 0;
-            
-            if (genA !== genB) {
-                // 代数が違う場合は、小さい順（昇順）にする
-                return genA - genB;
-            } else {
-                // 代数が同じ場合は、投稿が新しい順にする
-                return b.createdAt - a.createdAt;
-            }
+            return genA !== genB ? genA - genB : b.createdAt - a.createdAt;
         });
-        
         updateGalleryUI(); 
     });
 
     // ==========================================
-    // ▼ 無限スクロール（遅延読み込み）用の変数 ▼
+    // ▼ 無限スクロール（遅延読み込み） ▼
     // ==========================================
     let displayedCardCount = 0;
-    const cardsPerLoad = 6; // 1回に表示する枚数（これを少なくするほど最初は軽くなります）
-    let filteredCards = []; // 検索などで絞り込んだ後のカードリスト
-    let scrollObserver = null; // スクロール監視用
+    const cardsPerLoad = 6; 
+    let filteredCards = []; 
+    let scrollObserver = null; 
 
     function updateGalleryUI() {
         const galleryGrid = document.getElementById('galleryGrid');
         if (!galleryGrid) return;
         
         galleryGrid.innerHTML = ''; 
-        displayedCardCount = 0; // 表示枚数をリセット
-
-        // 古いスクロール監視を解除
-        if (scrollObserver) {
-            scrollObserver.disconnect();
-        }
+        displayedCardCount = 0; 
+        if (scrollObserver) scrollObserver.disconnect();
 
         const searchInput = document.getElementById('searchInput');
         const searchQuery = searchInput ? searchInput.value.toLowerCase() : '';
         const filterValue = galleryFilterSelect ? galleryFilterSelect.value : 'all';
 
-        // 1. まず全カードの中から、条件に合うものだけを「順番通り」に抽出する
         filteredCards = allCards.filter(card => {
             if (filterValue !== 'all' && card.generation !== filterValue) return false;
-            if (searchQuery && !card.searchWords.includes(searchQuery)) return false;
-            return true;
+            return !(searchQuery && !card.searchWords.includes(searchQuery));
         });
 
-        // 2. 最初の数枚だけを画面に表示する
         loadMoreCards();
     }
 
-    // ==========================================
-    // ▼ スクロールに合わせてカードを追加する処理 ▼
-    // ==========================================
     function loadMoreCards() {
         const galleryGrid = document.getElementById('galleryGrid');
         if (!galleryGrid) return;
 
-        // 次に表示する限界の枚数を計算
         const nextCount = Math.min(displayedCardCount + cardsPerLoad, filteredCards.length);
         
         for (let i = displayedCardCount; i < nextCount; i++) {
             const card = filteredCards[i];
-            
             const item = document.createElement('div');
             item.className = 'gallery-item';
 
             const img = document.createElement('img');
-            img.src = card.image;
             img.style.cursor = 'pointer'; 
-            img.loading = 'lazy'; // 画像の遅延読み込み（さらに高速化）
+            // 読み込み中の薄いグレーの仮画像をセット
+            img.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Crect width='10' height='10' fill='%23f0f0f0'/%3E%3C/svg%3E";
             
-            // --- 拡大表示の処理 ---
-            img.addEventListener('click', () => {
-                const imageModal = document.getElementById('imageModal');
-                const expandedImage = document.getElementById('expandedImage');
-                if (imageModal && expandedImage) {
-                    expandedImage.src = card.image; 
-                    imageModal.style.display = 'flex'; 
-                }
-            });
+            const setupImageClick = (imageSrc) => {
+                img.addEventListener('click', () => {
+                    const imageModal = document.getElementById('imageModal');
+                    const expandedImage = document.getElementById('expandedImage');
+                    if (imageModal && expandedImage) {
+                        expandedImage.src = imageSrc; 
+                        imageModal.style.display = 'flex'; 
+                    }
+                });
+            };
+
+            // ▼ 画像だけを別の場所から非同期（裏側）で取ってくる！ ▼
+            if (card.image) {
+                // まだ分離されていない古いカードの場合
+                img.src = card.image;
+                setupImageClick(card.image);
+            } else {
+                // 分離済みの新しいカードの場合（爆速！）
+                database.ref('card_images/' + card.id).once('value').then(snap => {
+                    const base64Img = snap.val();
+                    if (base64Img) {
+                        img.src = base64Img;
+                        setupImageClick(base64Img);
+                    }
+                });
+            }
             item.appendChild(img);
 
-            // --- 自分のカード専用のボタン ---
+            // --- 削除・編集ボタン ---
             if (card.ownerId === myUserId) {
-                // 削除ボタン
                 const delBtn = document.createElement('button');
-                delBtn.className = 'delete-btn';
-                delBtn.innerHTML = '×';
+                delBtn.className = 'delete-btn'; delBtn.innerHTML = '×';
                 delBtn.onclick = (e) => {
                     e.stopPropagation(); 
-                    if(confirm('本当に自分のカードを削除しますか？')) {
+                    if(confirm('本当に削除しますか？')) {
                         database.ref('cards/' + card.id).remove();
+                        database.ref('card_images/' + card.id).remove(); // 画像も削除
                     }
                 };
                 item.appendChild(delBtn);
 
-                // 編集ボタン（✏️）
                 const editBtn = document.createElement('button');
-                editBtn.className = 'edit-btn';
-                editBtn.innerHTML = '✏️';
+                editBtn.className = 'edit-btn'; editBtn.innerHTML = '✏️';
                 editBtn.onclick = (e) => {
                     e.stopPropagation(); 
-                    
-                    if (!card.rawFields) {
-                        alert('このカードは古いバージョンで作られているため、再編集できません。');
-                        return;
-                    }
-
+                    if (!card.rawFields) return alert('このカードは古いバージョンで作られているため、再編集できません。');
                     if (confirm('入力内容を復元して再編集しますか？\n（※写真は保存されていないため、再度選び直す必要があります）')) {
-                        if(document.getElementById('nameInput')) document.getElementById('nameInput').value = card.rawFields.name || '';
-                        if(document.getElementById('gradeInput')) document.getElementById('gradeInput').value = card.rawFields.grade || '';
-                        if(document.getElementById('hometownInput')) document.getElementById('hometownInput').value = card.rawFields.hometown || '';
-                        if(document.getElementById('birthInput')) document.getElementById('birthInput').value = card.rawFields.birth || '';
-                        if(document.getElementById('stationInput')) document.getElementById('stationInput').value = card.rawFields.station || '';
-                        if(document.getElementById('jobInput')) document.getElementById('jobInput').value = card.rawFields.job || '';
-                        if(document.getElementById('mbtiInput')) document.getElementById('mbtiInput').value = card.rawFields.mbti || '';
-                        if(document.getElementById('clubInput')) document.getElementById('clubInput').value = card.rawFields.club || '';
-                        if(document.getElementById('commentInput')) document.getElementById('commentInput').value = card.rawFields.comment || '';
-                        if(document.getElementById('signSelect')) document.getElementById('signSelect').value = card.rawFields.sign || '';
-
-                        ['nameInput', 'gradeInput', 'hometownInput', 'birthInput', 'stationInput', 'jobInput', 'mbtiInput', 'clubInput', 'commentInput'].forEach(id => {
-                            const el = document.getElementById(id);
-                            if(el) el.dispatchEvent(new Event('input'));
+                        const fields = ['name', 'grade', 'hometown', 'birth', 'station', 'job', 'mbti', 'club', 'comment'];
+                        fields.forEach(f => {
+                            const el = document.getElementById(f + 'Input');
+                            if(el) { el.value = card.rawFields[f] || ''; el.dispatchEvent(new Event('input')); }
                         });
                         const signEl = document.getElementById('signSelect');
-                        if(signEl) signEl.dispatchEvent(new Event('change'));
+                        if(signEl) { signEl.value = card.rawFields.sign || ''; signEl.dispatchEvent(new Event('change')); }
 
                         editingCardId = card.id;
-                        const uploadBtn = document.getElementById('uploadBtn');
-                        if (uploadBtn) {
-                            uploadBtn.textContent = '✏️ 変更を保存して上書きする';
-                            uploadBtn.style.backgroundColor = '#ffc107'; 
-                        }
+                        const uBtn = document.getElementById('uploadBtn');
+                        if (uBtn) { uBtn.textContent = '✏️ 変更を保存して上書きする'; uBtn.style.backgroundColor = '#ffc107'; }
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
                 };
@@ -600,7 +489,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         displayedCardCount = nextCount;
 
-        // 3. まだ読み込んでいないカードが残っている場合、一番下に「透明な目印」を置いてスクロールを監視する
+        // スクロール検知用
         if (displayedCardCount < filteredCards.length) {
             const sentinel = document.createElement('div');
             sentinel.style.height = '1px';
@@ -608,12 +497,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             scrollObserver = new IntersectionObserver((entries) => {
                 if (entries[0].isIntersecting) {
-                    scrollObserver.disconnect(); // 一旦監視をやめる
-                    sentinel.remove(); // 目印を消す
-                    loadMoreCards(); // 次のカードを読み込む
+                    scrollObserver.disconnect(); sentinel.remove(); loadMoreCards(); 
                 }
-            }, { rootMargin: '300px' }); // 画面の下から300px近づいたら次を読み込み開始
-
+            }, { rootMargin: '300px' });
             scrollObserver.observe(sentinel);
         }
     }
@@ -623,126 +509,118 @@ document.addEventListener('DOMContentLoaded', () => {
     if (galleryFilterSelect) galleryFilterSelect.addEventListener('change', updateGalleryUI);
 
     // ==========================================
-    // --- 6. 管理者一括ダウンロード機能 ---
+    // --- 6. 管理者専用ツール群 ---
     // ==========================================
+    
+    // 【ツールA】一括ダウンロード
     const adminDownloadBtn = document.getElementById('adminDownloadBtn');
     if (adminDownloadBtn) {
-        adminDownloadBtn.addEventListener('click', () => {
-            const password = prompt('管理者パスワードを入力してください:');
-            const adminPassword = 'wasawasa2026'; // パスワード
-
-            if (password === null) return;
-            if (password === adminPassword) {
-                if (allCards.length === 0) {
-                    alert('ダウンロードするカードがありません。');
-                    return;
+        adminDownloadBtn.addEventListener('click', async () => {
+            const password = prompt('パスワード:');
+            if (password !== 'wasawasa2026') return alert('パスワードが違います！');
+            if (allCards.length === 0) return alert('カードがありません。');
+            
+            adminDownloadBtn.disabled = true; adminDownloadBtn.textContent = '📦 ZIPファイル作成中...';
+            const zip = new JSZip();
+            for (let i = 0; i < allCards.length; i++) {
+                const card = allCards[i];
+                let base64Data = '';
+                if (card.image) base64Data = card.image.split(',')[1];
+                else {
+                    const snap = await database.ref('card_images/' + card.id).once('value');
+                    if (snap.val()) base64Data = snap.val().split(',')[1];
                 }
-                alert('ZIPファイルの作成を開始します。カードの枚数によっては少し時間がかかります...');
-                adminDownloadBtn.disabled = true;
-                adminDownloadBtn.textContent = '📦 ZIPファイル作成中...';
-
-                const zip = new JSZip();
-                allCards.forEach((card, index) => {
-                    const base64Data = card.image.split(',')[1];
-                    const searchWordsArray = card.searchWords.trim().split(/\s+/);
-                    const userName = searchWordsArray[0] || '名無し'; 
-                    const fileName = `${card.generation}代_${userName}_${index + 1}.jpg`;
-                    zip.file(fileName, base64Data, {base64: true});
-                });
-
-                zip.generateAsync({type:"blob"}).then(function(content) {
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(content);
-                    link.download = "WASA天文_自己紹介カード一覧.zip"; 
-                    link.click();
-                    adminDownloadBtn.disabled = false;
-                    adminDownloadBtn.textContent = '🤫 管理者専用：全カード一括ダウンロード';
-                });
-            } else {
-                alert('パスワードが違います！');
+                const userName = card.searchWords.trim().split(/\s+/)[0] || '名無し'; 
+                if (base64Data) zip.file(`${card.generation}代_${userName}_${i + 1}.jpg`, base64Data, {base64: true});
             }
+            zip.generateAsync({type:"blob"}).then(function(content) {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(content); link.download = "WASA天文_自己紹介カード一覧.zip"; 
+                link.click();
+                adminDownloadBtn.disabled = false; adminDownloadBtn.textContent = '🤫 管理者専用：全カード一括ダウンロード';
+            });
         });
     }
 
-    // --- 拡大画像を閉じる処理 ---
-    const imageModal = document.getElementById('imageModal');
-    if (imageModal) {
-        imageModal.addEventListener('click', () => {
-            imageModal.style.display = 'none';
+    // 【ツールB】データベース超高速化（データ分離）
+    const adminMigrateBtn = document.getElementById('adminMigrateBtn');
+    if (adminMigrateBtn) {
+        adminMigrateBtn.addEventListener('click', async () => {
+            const password = prompt('パスワード:');
+            if (password !== 'wasawasa2026') return alert('パスワードが違います！');
+            if (!confirm('【警告】既存のデータを分離して、サイトの読み込みを「超高速化」します。\n※数分かかる場合があります。画面を絶対に閉じないでください。')) return;
+
+            adminMigrateBtn.disabled = true;
+            adminMigrateBtn.textContent = '🚀 データベース最適化中...（画面を閉じないでください）';
+
+            let count = 0;
+            for (let i = 0; i < allCards.length; i++) {
+                const card = allCards[i];
+                // まだ分離されていない（古い構造の）カードを見つけたら分離する
+                if (card.image) {
+                    try {
+                        await database.ref('card_images/' + card.id).set(card.image);
+                        await database.ref('cards/' + card.id + '/image').remove();
+                        count++;
+                    } catch (e) { console.error('移行エラー:', e); }
+                }
+            }
+            alert(`最適化完了！\n${count}件の重いカードを分離しました！\nこれで読み込みが劇的に速くなります。`);
+            adminMigrateBtn.textContent = '🚀 管理者専用：データベースを超高速化（データ分離）';
+            adminMigrateBtn.disabled = false;
         });
     }
 
-    // ==========================================
-    // --- 7. 管理者一括軽量化（圧縮）機能 ---
-    // ==========================================
+    // 【ツールC】軽量化（圧縮）
     const adminCompressBtn = document.getElementById('adminCompressBtn');
     if (adminCompressBtn) {
         adminCompressBtn.addEventListener('click', async () => {
-            const password = prompt('管理者パスワードを入力してください:');
-            const adminPassword = 'wasawasa2026';
-
-            if (password === null) return;
-            if (password !== adminPassword) {
-                alert('パスワードが違います！');
-                return;
-            }
-
-            if (!confirm('【警告】\n既存のギャラリー画像をすべて自動で軽量化（圧縮）します。\n※この処理には数分かかる場合があります。途中で画面を閉じないでください。よろしいですか？')) {
-                return;
-            }
-
-            adminCompressBtn.disabled = true;
-            adminCompressBtn.textContent = '🔄 軽量化処理中... 絶対に画面を閉じないでください！';
-
+            const password = prompt('パスワード:');
+            if (password !== 'wasawasa2026') return;
+            if (!confirm('重い画像を圧縮します。')) return;
+            
+            adminCompressBtn.disabled = true; adminCompressBtn.textContent = '🔄 軽量化処理中... 絶対に画面を閉じないでください！';
             let successCount = 0;
 
-            // 1枚ずつ順番に処理する
             for (let i = 0; i < allCards.length; i++) {
                 const card = allCards[i];
+                let currentImgStr = card.image;
+                if (!currentImgStr) {
+                    const snap = await database.ref('card_images/' + card.id).once('value');
+                    currentImgStr = snap.val();
+                }
                 
                 await new Promise((resolve) => {
+                    if (!currentImgStr) return resolve();
                     const img = new Image();
-                    img.crossOrigin = "Anonymous"; // エラー回避
+                    img.crossOrigin = "Anonymous"; 
                     img.onload = () => {
-                        // 横幅が1800px（scale: 1.5相当）より大きい重い画像だけを縮小対象にする
-                        if (img.width > 1800) {
+                        if (img.width > 1800) { // 重い画像だけを処理
                             const canvas = document.createElement('canvas');
                             const ctx = canvas.getContext('2d');
-                            
-                            // 横幅を1800pxに縮小し、縦幅をそれに合わせる
                             const targetWidth = 1800;
                             const targetHeight = img.height * (1800 / img.width);
-                            
-                            canvas.width = targetWidth;
-                            canvas.height = targetHeight;
-                            
-                            // キャンバスに縮小して描画
+                            canvas.width = targetWidth; canvas.height = targetHeight;
                             ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
                             
-                            // 圧縮した新しいデータを作成 (画質80%)
                             const compressedData = canvas.toDataURL('image/jpeg', 0.8);
-                            
-                            // データベースの画像を上書き
-                            database.ref('cards/' + card.id).update({ image: compressedData }).then(() => {
-                                successCount++;
-                                resolve();
-                            }).catch((err) => {
-                                console.error(err);
-                                resolve();
+                            // 分離先の場所に保存
+                            database.ref('card_images/' + card.id).set(compressedData).then(() => {
+                                if (card.image) database.ref('cards/' + card.id + '/image').remove(); // 古いのがあれば消す
+                                successCount++; resolve();
                             });
-                        } else {
-                            // すでに軽い画像は何もしないで次へ
-                            resolve();
-                        }
+                        } else resolve();
                     };
-                    img.onerror = () => resolve(); // エラーが起きたらスキップ
-                    img.src = card.image;
+                    img.onerror = () => resolve(); 
+                    img.src = currentImgStr;
                 });
             }
-            
-            alert(`処理完了！\n${successCount}枚の重いカードを軽量化しました。これでギャラリーの読み込みが速くなります！`);
-            adminCompressBtn.disabled = false;
-            adminCompressBtn.textContent = '🛠 管理者専用：重いカードを一括軽量化';
+            alert(`処理完了！\n${successCount}枚のカードを軽量化しました。`);
+            adminCompressBtn.disabled = false; adminCompressBtn.textContent = '🛠 管理者専用：重いカードを一括軽量化';
         });
     }
-}); // <--- DOMContentLoaded ここで終了
+
+    // --- 拡大画像を閉じる ---
+    const imageModal = document.getElementById('imageModal');
+    if (imageModal) imageModal.addEventListener('click', () => imageModal.style.display = 'none');
+});
